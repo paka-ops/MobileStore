@@ -1,6 +1,7 @@
 package com.example.egestion.models;
 
 import com.example.egestion.enums.Post;
+import com.example.egestion.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,4 +18,6 @@ public class Employee extends Person {
     private Store store;
     @ManyToOne
     private Employer employer;
+    @Enumerated(value = EnumType.STRING)
+    private Status status;
 }

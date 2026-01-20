@@ -1,17 +1,16 @@
 package com.example.egestion.services.interfaces;
 
-import com.example.egestion.exceptions.CreationFailedException;
-import com.example.egestion.exceptions.ElementNotFoundException;
-import com.example.egestion.exceptions.UpdateFailedException;
+import com.example.egestion.exceptions.*;
 import com.example.egestion.models.Category;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface ICategory {
-    Category add(Category category) throws CreationFailedException;
-    Category update(Category category, UUID id) throws UpdateFailedException;
-    void  delete(UUID categoryId);
-    List<Category> getAll();
-    Category getOne(UUID uuid) throws ElementNotFoundException;
+    Category add(Category category) throws CreationFailedException ,UpdateFailedException, NotAuthenticatedException, AccessDeniedException,NotAuthorizedException,ElementNotFoundException;
+    Category update(Category category, UUID id) throws UpdateFailedException,UpdateFailedException, NotAuthenticatedException, AccessDeniedException,NotAuthorizedException,ElementNotFoundException;
+    void  delete(UUID categoryId) throws ElementNotFoundException, UpdateFailedException, NotAuthenticatedException, AccessDeniedException,NotAuthorizedException,ElementNotFoundException;
+    List<Category> getAll() throws UpdateFailedException, NotAuthenticatedException, AccessDeniedException,NotAuthorizedException,ElementNotFoundException;
+    List<Category> getAllByStore(UUID storeId) throws ElementNotFoundException, AccessDeniedException, NotAuthenticatedException, NotAuthorizedException;
+    Category getOne(UUID id) throws ElementNotFoundException;
 }

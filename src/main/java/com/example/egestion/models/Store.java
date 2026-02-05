@@ -21,7 +21,6 @@ public class Store {
     List<Employee> employee = new ArrayList<>();
     @ManyToOne
     private Employer employer;
-    @ManyToMany
-    @JoinTable(name = "stores_category",joinColumns = @JoinColumn(name="category_id"),inverseJoinColumns = @JoinColumn(name = "store_id"))
+    @OneToMany
     private List<Category>categories;
 }

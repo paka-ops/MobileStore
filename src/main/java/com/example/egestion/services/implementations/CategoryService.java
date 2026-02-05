@@ -4,15 +4,15 @@ import com.example.egestion.exceptions.*;
 import com.example.egestion.models.Category;
 import com.example.egestion.models.Store;
 import com.example.egestion.repositories.CategoryRepository;
-import com.example.egestion.security.SecurityCheck;
 import com.example.egestion.services.interfaces.ICategory;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-public class CategoryService implements ICategory {
-    private final SecurityCheck secCheck;
+@Service
+public class CategoryService {
+   /* private final SecurityCheck secCheck;
     private final CategoryRepository categoryRepository;
     private final StoreService storeService;
     public CategoryService(CategoryRepository categoryRepository, SecurityCheck secCheck, StoreService storeService){
@@ -67,4 +67,6 @@ public class CategoryService implements ICategory {
         Optional<Category> category = categoryRepository.findById(id);
         return category.orElseThrow(()->new ElementNotFoundException("element not found"));
     }
+
+    */
 }

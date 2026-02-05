@@ -18,12 +18,11 @@ import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
-
+@DiscriminatorValue("Employee")
 @Data
 @Entity
 public class Employee extends Person implements UserDetails {
-    @Id @GeneratedValue  @UuidGenerator(style = UuidGenerator.Style.TIME)
-    private UUID id;
+
     @Enumerated(value = EnumType.STRING)
     private Post post;
     @ManyToOne
@@ -40,7 +39,7 @@ public class Employee extends Person implements UserDetails {
 
     @Override
     public @Nullable String getPassword() {
-        return "";
+        return super.getPassword();
     }
 
     @Override

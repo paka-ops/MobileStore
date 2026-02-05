@@ -10,10 +10,12 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IEmployer {
-    Employer create(Employer employer) throws CreationFailedException, NotAuthenticatedException, AccessDeniedException,NotAuthorizedException;
-    Employer update(Employer employer, UUID id) throws UpdateFailedException, NotAuthenticatedException, AccessDeniedException,NotAuthorizedException;
-    Employee getEmployee(UUID id) throws NotAuthenticatedException,NotAuthorizedException;
-    List<Employee> employees() throws  NotAuthenticatedException, AccessDeniedException,NotAuthorizedException ;
+    Employer create(Employer employer) throws CreationFailedException;
+    Employer update(Employer employer, UUID id) throws ElementNotFoundException;
+    void delete(UUID id) throws ElementNotFoundException;
+    List<Employer> getAll();
+    Employer getOne(UUID id) throws ElementNotFoundException;
+
 
 
 

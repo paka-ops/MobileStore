@@ -2,9 +2,10 @@ package com.example.egestion.repositories;
 
 import com.example.egestion.models.Employer;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.UUID;
 
 public interface EmployerRepository extends JpaRepository<Employer, UUID> {
-    Employer findByUsername(String username);
+    UserDetails findByUsername(String username);
 }

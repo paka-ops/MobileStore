@@ -17,13 +17,13 @@ public class Category {
     private String name;
     @OneToMany(mappedBy = "category",orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
-    @ManyToMany
-    private List<Store> stores =  new ArrayList<>();
+    @ManyToOne
+    private Store store;
 
-    public Category(List<Product> products, String name,List<Store> stores) {
+    public Category(List<Product> products, String name,Store store) {
         this.products = products;
         this.name = name;
-        this.stores = stores;
+        this.store = store;
 
     }
 }

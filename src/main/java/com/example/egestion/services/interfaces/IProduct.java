@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface IProduct {
     Product add(Product product) throws CreationFailedException, NotAuthenticatedException, AccessDeniedException,NotAuthorizedException;
     Product update(Product product, UUID id) throws UpdateFailedException, NotAuthenticatedException, AccessDeniedException,NotAuthorizedException, ElementNotFoundException;
-    void delete(UUID productId)throws UpdateFailedException, NotAuthenticatedException, AccessDeniedException,NotAuthorizedException;
+    void delete(UUID productId) throws UpdateFailedException, NotAuthenticatedException, AccessDeniedException, NotAuthorizedException, ElementNotFoundException;
     List<Product> getAll() throws AccessDeniedException, NotAuthenticatedException;
     Product getOne(UUID id) throws ElementNotFoundException;
 }

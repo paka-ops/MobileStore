@@ -3,25 +3,25 @@ package com.example.egestion.services.implementations;
 import com.example.egestion.exceptions.*;
 import com.example.egestion.models.Employee;
 import com.example.egestion.repositories.EmployeeRepository;
-import com.example.egestion.security.SecurityCheck;
+import com.example.egestion.repositories.EmployeeRepository;
 import com.example.egestion.services.interfaces.IEmployee;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 @Service
-public class EmployeeService implements IEmployee {
+public class EmployeeService implements IEmployee  {
     private final EmployeeRepository employeeRepository;
-    private final SecurityCheck securityCheck;
-    public EmployeeService(EmployeeRepository employeeRepository,SecurityCheck securityCheck){
+
+    public EmployeeService(EmployeeRepository employeeRepository){
         this.employeeRepository = employeeRepository;
-        this.securityCheck = securityCheck;
+
     }
 
     @Override
     public Employee create(Employee employee) throws CreationFailedException,
             NotAuthenticatedException, AccessDeniedException, NotAuthorizedException {
-            securityCheck.hasRole("ROLE_EMPLOYER");
+        
             try {
                 Employee e = this.employeeRepository.save(employee);
                 return e;
@@ -31,8 +31,9 @@ public class EmployeeService implements IEmployee {
     }
 
     @Override
-    public Employee update(Employee employee, UUID id) throws UpdateFailedException, NotAuthenticatedException, AccessDeniedException, NotAuthorizedException,ElementNotFoundException {
-        securityCheck.hasRole("ROLE_EMPLOYER");
+    public Employee update(Employee employee, UUID id) throws UpdateFailedException, NotAuthenticatedException,
+            AccessDeniedException, NotAuthorizedException,ElementNotFoundException {
+        
         if(!employeeRepository.existsById(id)) throw new ElementNotFoundException("user not found ");
         try{
             employee.setId(id);
@@ -45,8 +46,9 @@ public class EmployeeService implements IEmployee {
     }
 
     @Override
-    public void delete(UUID id) throws NotAuthenticatedException, AccessDeniedException, NotAuthorizedException ,ElementNotFoundException{
-        securityCheck.hasRole("ROLE_EMPLOYER");
+    public void delete(UUID id) throws NotAuthenticatedException, AccessDeniedException,
+            NotAuthorizedException ,ElementNotFoundException{
+        
         if(!employeeRepository.existsById(id)) throw new ElementNotFoundException("user not found ");
         employeeRepository.deleteById(id);
     }
@@ -61,4 +63,6 @@ public class EmployeeService implements IEmployee {
         Optional<Employee> employee =  employeeRepository.findById(id);
         return employee.orElseThrow(()->new ElementNotFoundException("user not found"));
     }
+
+
 }

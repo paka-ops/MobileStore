@@ -1,0 +1,183 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-02-04T00:00:00Z",
+  "__export_source": "insomnia.desktop.app:2026.1.0",
+  "resources": [
+    {
+      "_id": "wrk_eGestion",
+      "_type": "workspace",
+      "name": "eGestion API",
+      "description": "Workspace pour tester les APIs eGestion (login, Employee, Employer)",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_eGestion",
+      "_type": "environment",
+      "parentId": "wrk_eGestion",
+      "environment": {
+        "baseUrl": "http://localhost:8080",
+        "username": "tera",
+        "password": "rema",
+        "JSESSIONID": "",
+        "employeeId": "",
+        "employerId": ""
+      }
+    },
+    {
+      "_id": "req_login",
+      "_type": "request",
+      "parentId": "wrk_eGestion",
+      "name": "Login (form) - /api/login",
+      "method": "POST",
+      "url": "{{ baseUrl }}/api/login",
+      "body": {
+        "mimeType": "application/x-www-form-urlencoded",
+        "params": [
+          { "name": "username", "value": "{{ username }}", "disabled": false },
+          { "name": "password", "value": "{{ password }}", "disabled": false }
+        ]
+      },
+      "headers": [
+        { "name": "Content-Type", "value": "application/x-www-form-urlencoded" }
+      ],
+      "description": "Effectue le form login sur /api/login. Inspecte l'en-tête Set-Cookie pour récupérer JSESSIONID ou laisse Insomnia gérer le cookie-jar."
+    },
+    {
+      "_id": "req_getEmployees",
+      "_type": "request",
+      "parentId": "wrk_eGestion",
+      "name": "GET /api/v1/employee (list)",
+      "method": "GET",
+      "url": "{{ baseUrl }}/api/v1/employee",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Cookie", "value": "JSESSIONID={{ JSESSIONID }}" }
+      ],
+      "description": "Liste les employees. Si Insomnia a stocké le cookie automatiquement, la présence de l'en-tête Cookie est optionnelle."
+    },
+    {
+      "_id": "req_postEmployee",
+      "_type": "request",
+      "parentId": "wrk_eGestion",
+      "name": "POST /api/v1/employee (create)",
+      "method": "POST",
+      "url": "{{ baseUrl }}/api/v1/employee",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"firstname\": \"Alice\",\n  \"secondeName\": \"Martin\",\n  \"username\": \"alicem\",\n  \"password\": \"motdepasse\",\n  \"phone\": \"0612345678\"\n}"
+      },
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Cookie", "value": "JSESSIONID={{ JSESSIONID }}" }
+      ],
+      "description": "Créer un employee — NE PAS fournir d'id (généré automatiquement). Après création, sélectionne la valeur id dans la réponse et utilise 'Set Environment Variable' pour remplir {{ employeeId }} (JSONPath possible: $.data.id ou $.id selon la réponse)."
+    },
+    {
+      "_id": "req_getEmployeeById",
+      "_type": "request",
+      "parentId": "wrk_eGestion",
+      "name": "GET /api/v1/employee/{employeeId}",
+      "method": "GET",
+      "url": "{{ baseUrl }}/api/v1/employee/{{ employeeId }}",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Cookie", "value": "JSESSIONID={{ JSESSIONID }}" }
+      ],
+      "description": "Récupère un employee par son id (utiliser la variable {{ employeeId }} extraite depuis la réponse du POST)."
+    },
+    {
+      "_id": "req_patchEmployee",
+      "_type": "request",
+      "parentId": "wrk_eGestion",
+      "name": "PATCH /api/v1/employee/{employeeId}",
+      "method": "PATCH",
+      "url": "{{ baseUrl }}/api/v1/employee/{{ employeeId }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"firstname\": \"Alice-Rose\",\n  \"phone\": \"0699999999\"\n}"
+      },
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Cookie", "value": "JSESSIONID={{ JSESSIONID }}" }
+      ],
+      "description": "Met à jour partiellement un employee. Ne pas inclure l'id dans le corps."
+    },
+    {
+      "_id": "req_deleteEmployee",
+      "_type": "request",
+      "parentId": "wrk_eGestion",
+      "name": "DELETE /api/v1/employee/{employeeId}",
+      "method": "DELETE",
+      "url": "{{ baseUrl }}/api/v1/employee/{{ employeeId }}",
+      "headers": [
+        { "name": "Cookie", "value": "JSESSIONID={{ JSESSIONID }}" }
+      ],
+      "description": "Supprime un employee par id."
+    },
+    {
+      "_id": "req_postEmployer",
+      "_type": "request",
+      "parentId": "wrk_eGestion",
+      "name": "POST /employers (create)",
+      "method": "POST",
+      "url": "{{ baseUrl }}/employers",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"firstname\": \"Bob\",\n  \"secondeName\": \"Durand\",\n  \"username\": \"bobd\",\n  \"password\": \"motdepasse\",\n  \"phone\": \"0712345678\",\n  \"stores\": [],\n  \"employees\": []\n}"
+      },
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Cookie", "value": "JSESSIONID={{ JSESSIONID }}" }
+      ],
+      "description": "Créer un employer — NE PAS fournir d'id. Après création, utiliser la réponse pour remplir {{ employerId }} (JSONPath: $.data.id ou $.id). Note: getAll et create sont protégés par le rôle ADMIN."
+    },
+    {
+      "_id": "req_getEmployers",
+      "_type": "request",
+      "parentId": "wrk_eGestion",
+      "name": "GET /employers (list)",
+      "method": "GET",
+      "url": "{{ baseUrl }}/employers",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Cookie", "value": "JSESSIONID={{ JSESSIONID }}" }
+      ],
+      "description": "Liste des employers (nécessite rôle ADMIN)."
+    },
+    {
+      "_id": "req_getEmployerById",
+      "_type": "request",
+      "parentId": "wrk_eGestion",
+      "name": "GET /employers/{employerId}",
+      "method": "GET",
+      "url": "{{ baseUrl }}/employers/{{ employerId }}",
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Cookie", "value": "JSESSIONID={{ JSESSIONID }}" }
+      ],
+      "description": "Récupère un employer par id (utiliser {{ employerId }} rempli depuis le POST)."
+    },
+    {
+      "_id": "req_patchEmployer",
+      "_type": "request",
+      "parentId": "wrk_eGestion",
+      "name": "PATCH /employers/{employerId}",
+      "method": "PATCH",
+      "url": "{{ baseUrl }}/employers/{{ employerId }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"firstname\": \"Bob-Paul\",\n  \"phone\": \"0799999999\"\n}"
+      },
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Cookie", "value": "JSESSIONID={{ JSESSIONID }}" }
+      ],
+      "description": "Met à jour partiellement un employer."
+    }
+  ]
+}

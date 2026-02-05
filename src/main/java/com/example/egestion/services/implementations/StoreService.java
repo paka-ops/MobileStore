@@ -3,25 +3,25 @@ package com.example.egestion.services.implementations;
 import com.example.egestion.exceptions.*;
 import com.example.egestion.models.Store;
 import com.example.egestion.repositories.StoreRepository;
-import com.example.egestion.security.SecurityCheck;
+import com.example.egestion.security.SecCheck;
 import com.example.egestion.services.interfaces.IStore;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+@Service
+public class StoreService implements IStore { private final StoreRepository storeRepository;
+    private final SecCheck securityCheck;
 
-public class StoreService implements IStore {
-    private final StoreRepository storeRepository;
-    private final SecurityCheck securityCheck;
-
-    public StoreService(StoreRepository storeRepository, SecurityCheck securityCheck) {
+    public StoreService(StoreRepository storeRepository, SecCheck securityCheck) {
         this.storeRepository = storeRepository;
         this.securityCheck = securityCheck;
     }
 
     @Override
     public List<Store> getAll() throws AccessDeniedException, NotAuthenticatedException {
-        this.securityCheck.hasRole("ROLE_EMPLOYER");
+
         return storeRepository.findAll();
     }
 
@@ -30,13 +30,13 @@ public class StoreService implements IStore {
         boolean isExist = storeRepository.existsById(id);
         if(!isExist) throw new ElementNotFoundException("elemet not found ");
         Optional<Store> st = storeRepository.findById(id);
-        boolean isElementOfStore = this.securityCheck.isElementOfStore(st.get());
-        if(!isElementOfStore) throw new NotAuthorizedException("not authorized");
+        boolean isMemberOfStore = this.securityCheck.isMemberOfStore(st.get());
+        if(!isMemberOfStore) throw new NotAuthorizedException("not authorized");
         return st.get();
     }
 
     @Override
-    public Store add(Store store) throws CreationFailedException, AccessDeniedException, NotAuthenticatedException {
+    public Store add(Store store) throws CreationFailedException, AccessDeniedException, NotAuthenticatedException, NotAuthorizedException {
         this.securityCheck.hasRole("ROLE_EMPLOYER");
         try{
             Store st =  storeRepository.save(store);
@@ -52,20 +52,21 @@ public class StoreService implements IStore {
         this.securityCheck.hasRole("EMPLOYER");
         Optional<Store> st = storeRepository.findById(id);
         if(!st.isPresent()) throw new ElementNotFoundException("element not found ");
-        boolean isElementOfStore = this.securityCheck.isElementOfStore(st.get());
-        if(!isElementOfStore) throw new NotAuthorizedException("not authorized");
+        boolean isMemberOfStore = this.securityCheck.isMemberOfStore(st.get());
+        if(!isMemberOfStore) throw new NotAuthorizedException("not authorized");
         store.setId(id);
         return storeRepository.save(store);
 
     }
 
     @Override
-    public void delete(UUID id) throws ElementNotFoundException, AccessDeniedException, NotAuthenticatedException {
+    public void delete(UUID id) throws ElementNotFoundException, AccessDeniedException, NotAuthenticatedException, NotAuthorizedException {
         this.securityCheck.hasRole("EMPLOYER");
         boolean isExist = storeRepository.existsById(id);
         if(!isExist) throw new ElementNotFoundException("element not found ");
         storeRepository.deleteById(id);
     }
+
 
 
 }

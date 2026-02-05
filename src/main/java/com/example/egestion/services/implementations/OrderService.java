@@ -4,15 +4,14 @@ import com.example.egestion.exceptions.*;
 import com.example.egestion.models.Employee;
 import com.example.egestion.models.Order;
 import com.example.egestion.repositories.OrderRepository;
-import com.example.egestion.security.SecurityCheck;
 import com.example.egestion.services.interfaces.IOrder;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class OrderService implements IOrder {
-    private final OrderRepository orderRepository;
+public class OrderService {
+   /* private final OrderRepository orderRepository;
     private final SecurityCheck secCheck;
     private final EmployeeService employeeService;
     public OrderService(OrderRepository orderRepository,SecurityCheck secCheck,EmployeeService employeeService){
@@ -23,7 +22,7 @@ public class OrderService implements IOrder {
 
 
     @Override
-    public Order create(Order order) throws CreationFailedException, NotAuthenticatedException, AccessDeniedException {*
+    public Order create(Order order) throws CreationFailedException, NotAuthenticatedException, AccessDeniedException {
         this.secCheck.hasRole("ROLE_EMPLOYEE");
         try{
             Order o = orderRepository.save(order);
@@ -75,4 +74,6 @@ public class OrderService implements IOrder {
        Optional<Order> order = orderRepository.findById(id);
        return order.orElseThrow(()-> new ElementNotFoundException("element not found  "));
     }
+
+    */
 }

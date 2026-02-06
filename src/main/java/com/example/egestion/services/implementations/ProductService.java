@@ -4,33 +4,33 @@ import com.example.egestion.exceptions.*;
 import com.example.egestion.models.Category;
 import com.example.egestion.models.Product;
 import com.example.egestion.models.Store;
+import com.example.egestion.repositories.CategoryRepository;
 import com.example.egestion.repositories.ProductRepository;
 
+import com.example.egestion.security.SecCheck;
 import com.example.egestion.services.interfaces.IProduct;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class ProductService {
-   /* private final ProductRepository productRepository;
-    private final SecurityCheck securityCheck;
+public class ProductService implements IProduct {
+    private final ProductRepository productRepository;
+    private final SecCheck securityCheck;
+    private final CategoryRepository categoryRepository;
 
-    public ProductService(ProductRepository productRepository, SecurityCheck securityCheck) {
+    public ProductService(ProductRepository productRepository, SecCheck securityCheck, CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
         this.securityCheck = securityCheck;
-    }
-    private boolean isElementOfProStore(Product product) throws AccessDeniedException, NotAuthenticatedException, NotAuthorizedException {
-        Category cat = product.getCategory();
-        Store store = cat.getStore();
-        if(!this.securityCheck.isElementOfStore(store)) throw new NotAuthorizedException("not authorized: you are note the owner of this store");
-        return true;
+        this.categoryRepository = categoryRepository;
     }
 
+
     @Override
-    public Product add(Product product) throws CreationFailedException, NotAuthenticatedException, AccessDeniedException, NotAuthorizedException {
+    public Product add(Product product,UUID categoryId) throws CreationFailedException, NotAuthenticatedException, AccessDeniedException, NotAuthorizedException, ElementNotFoundException {
         this.securityCheck.hasRole("ROLE_EMPLOYER");
-        this.isElementOfProStore(product);
+        Optional<Category> category = categoryRepository.findById(categoryId);
+        if(category.isEmpty()) throw new ElementNotFoundException("Categorie not found ");
         try{
             Product pro = productRepository.save(product);
             return pro;
@@ -42,7 +42,6 @@ public class ProductService {
     @Override
     public Product update(Product product, UUID id) throws UpdateFailedException, NotAuthenticatedException, AccessDeniedException, NotAuthorizedException,ElementNotFoundException {
         this.securityCheck.hasRole("ROLE_EMPLOYER");
-        this.isElementOfProStore(product);
         boolean isExist  = productRepository.existsById(id);
         if(!isExist) throw new ElementNotFoundException("element not found ");
         product.setId(id);
@@ -55,12 +54,11 @@ public class ProductService {
         this.securityCheck.hasRole("ROLE_EMPLOYER");
         Optional<Product> product = productRepository.findById(productId);
         if(!product.isPresent()) throw new ElementNotFoundException("element not found: product not found");
-        this.isElementOfProStore(product.get());
         productRepository.deleteById(productId);
     }
 
     @Override
-    public List<Product> getAll() throws AccessDeniedException, NotAuthenticatedException {
+    public List<Product> getAll() throws AccessDeniedException, NotAuthenticatedException, NotAuthorizedException {
         this.securityCheck.hasRole("ROLE_EMPLOYER");
         return productRepository.findAll();
     }
@@ -72,5 +70,4 @@ public class ProductService {
         return productRepository.findById(id).get();
     }
 
-    */
 }

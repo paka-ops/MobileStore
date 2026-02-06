@@ -30,7 +30,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http){
         return http.csrf(csrf ->csrf.disable())
                 .authorizeHttpRequests(
-                        req ->req.requestMatchers("/api/login").permitAll()
+                        req ->req
+                                .requestMatchers("/api/login")
+                                .permitAll()
                                 .anyRequest().authenticated())
                 .formLogin(form ->
                         form.loginProcessingUrl("/api/login")
@@ -43,7 +45,10 @@ public class SecurityConfig {
                                     username = user.getUsername();
                                     if(user instanceof Employee){
                                         userType = "employee";
-                                    }else userType = "employer";
+                                    }else if(user instanceof Admin){
+                                        userType = "Admin";
+                                    }
+                                    else userType = "employer";
                                     Map<String,String> response = new HashMap<>();
                                     response.put("status","success");
                                     response.put("message","login successful");
@@ -77,38 +82,10 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService(PersonRepository pRepo){
         return username ->(UserDetails) pRepo.findByUsername(username);
     }
-    @Bean
-    public CommandLineRunner loadData(PersonRepository pRepo,PasswordEncoder encoder){
-        return args -> {
-            pRepo.save(new Admin(
-                    "wess",        // firstname
-                    "wess",        // secondeName
-                    "wess",        // username
-                    encoder.encode( "rema"),
-                    null,
-                    "superAdmin"
 
-            ));
-            pRepo.save(new Employer(
-                    "tera",        // firstname
-                    "tera",        // secondeName
-                    "tera",        // username
-                    encoder.encode( "rema"),        // password
-                    null,          // phone
-                    null,          // stores
-                    null           // employees
-            ));
-            pRepo.save(new Employer(
-                    "KB",        // firstname
-                    "KB",        // secondeName
-                    "KB",        // username
-                    encoder.encode( "rema"),        // password
-                    null,          // phone
-                    null,          // stores
-                    null           // employees
-            ));
-        };
-    }
+
+
+
 
 
 

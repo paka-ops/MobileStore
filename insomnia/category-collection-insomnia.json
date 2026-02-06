@@ -1,0 +1,196 @@
+{
+  "__export_format": 4,
+  "__export_date": "2026-02-06T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:generated",
+  "resources": [
+    {
+      "_id": "wrk_eGestion_categories",
+      "_type": "workspace",
+      "name": "eGestion - Category API",
+      "description": "Workspace pour tester CategoryController (session-based via /api/login)",
+      "scope": "collection",
+      "created": 0,
+      "modified": 0,
+      "parentId": null
+    },
+    {
+      "_id": "env_eGestion_categories",
+      "_type": "environment",
+      "parentId": "wrk_eGestion_categories",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8080",
+        "employer_user": "tera",
+        "employer_pass": "rema",
+        "admin_user": "wess",
+        "admin_pass": "rema",
+        "store_id": "",
+        "category_id": ""
+      },
+      "metaSortKey": -1,
+      "created": 0,
+      "modified": 0
+    },
+    {
+      "_id": "jar_eGestion_categories",
+      "_type": "cookie_jar",
+      "parentId": "wrk_eGestion_categories",
+      "cookies": []
+    },
+    {
+      "_id": "fld_category_api",
+      "_type": "request_group",
+      "parentId": "wrk_eGestion_categories",
+      "name": "Category API",
+      "description": "Requêtes pour /api/v1/categories",
+      "environment": {}
+    },
+    {
+      "_id": "req_login_category",
+      "_type": "request",
+      "parentId": "fld_category_api",
+      "name": "Login (form) - POST /api/login",
+      "method": "POST",
+      "url": "{{ base_url }}/api/login",
+      "body": {
+        "mimeType": "application/x-www-form-urlencoded",
+        "params": [
+          {
+            "name": "username",
+            "value": "{{ employer_user }}",
+            "id": "p_login_username_category"
+          },
+          {
+            "name": "password",
+            "value": "{{ employer_pass }}",
+            "id": "p_login_password_category"
+          }
+        ]
+      },
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_all_categories",
+      "_type": "request",
+      "parentId": "fld_category_api",
+      "name": "GET /api/v1/categories (list)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/categories",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_category",
+      "_type": "request",
+      "parentId": "fld_category_api",
+      "name": "GET /api/v1/categories/{id}",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/categories/{{ category_id }}",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_categories_by_store",
+      "_type": "request",
+      "parentId": "fld_category_api",
+      "name": "GET /api/v1/categories/{storeId} (by store)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/categories/{{ store_id }}",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_create_category",
+      "_type": "request",
+      "parentId": "fld_category_api",
+      "name": "POST /api/v1/categories/{storeId} (create)",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/categories/{{ store_id }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Fruits\",\n  \"description\": \"Fruits frais\",\n  \"products\": null\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_patch_category",
+      "_type": "request",
+      "parentId": "fld_category_api",
+      "name": "PATCH /api/v1/categories/{id} (update)",
+      "method": "PATCH",
+      "url": "{{ base_url }}/api/v1/categories/{{ category_id }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Fruits & Légumes\",\n  \"description\": \"Fruits et légumes frais\",\n  \"products\": null\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_delete_category",
+      "_type": "request",
+      "parentId": "fld_category_api",
+      "name": "DELETE /api/v1/categories/{id}",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v1/categories/{{ category_id }}",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_notes_category",
+      "_type": "request",
+      "parentId": "fld_category_api",
+      "name": "Notes d'utilisation (ne pas exécuter)",
+      "method": "GET",
+      "url": "{{ base_url }}/",
+      "body": {
+        "mimeType": "text/plain",
+        "text": "Instructions:\n1) Exécutez la requête 'Login (form) - POST /api/login' (employer par défaut tera/rema) avant les requêtes protégées ; Insomnia stockera le cookie JSESSIONID automatiquement.\n2) Pour créer une catégorie, remplissez 'store_id' dans l'environnement et exécutez POST /api/v1/categories/{{ store_id }}.\n3) Copiez l'id retourné et collez-le dans la variable d'environnement 'category_id' pour GET / PATCH / DELETE.\nRemarque: comme demandé, les associations (ex: products) sont laissées à null dans les bodies."
+      },
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "text/plain"
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,8 @@
 package com.example.egestion.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,15 +15,27 @@ import java.util.UUID;
 
 @Entity
 @Data @NoArgsConstructor @AllArgsConstructor
+
 public class Store {
     @Id @GeneratedValue @UuidGenerator(style = UuidGenerator.Style.TIME)
     private UUID id;
     private String name;
     private String localisation;
-    @OneToMany(mappedBy ="store")
-    List<Employee> employee = new ArrayList<>();
+    @OneToMany(mappedBy ="store",orphanRemoval = false)
+    @JsonIgnore
+    List<Employee> employees = new ArrayList<>();
     @ManyToOne
     private Employer employer;
-    @OneToMany
-    private List<Category>categories;
+    @OneToMany(mappedBy = "store", orphanRemoval = true)
+    @JsonIgnore
+    private List<Category>categories = new ArrayList<>();
+    @PreRemove
+    private void deleteStore(){
+        if(employees != null){
+            for(Employee e : employees){
+                e.setStore(null);
+            }
+
+        }
+    }
 }

@@ -1,0 +1,184 @@
+{
+  "__export_format": 4,
+  "__export_date": "2026-02-05T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:generated",
+  "resources": [
+    {
+      "_id": "wrk_eGestion",
+      "_type": "workspace",
+      "name": "eGestion - Employee API",
+      "description": "Workspace pour tester EmployeeController (session-based via /api/login)",
+      "scope": "collection",
+      "created": 0,
+      "modified": 0,
+      "parentId": null
+    },
+    {
+      "_id": "env_eGestion_default",
+      "_type": "environment",
+      "parentId": "wrk_eGestion",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8080",
+        "employer_user": "tera",
+        "employer_pass": "rema",
+        "admin_user": "wess",
+        "admin_pass": "rema",
+        "employee_id": ""
+      },
+      "metaSortKey": -1,
+      "created": 0,
+      "modified": 0
+    },
+    {
+      "_id": "jar_eGestion",
+      "_type": "cookie_jar",
+      "parentId": "wrk_eGestion",
+      "cookies": []
+    },
+    {
+      "_id": "fld_employee_api",
+      "_type": "request_group",
+      "parentId": "wrk_eGestion",
+      "name": "Employee API",
+      "description": "Requêtes pour /api/v1/employee",
+      "environment": {}
+    },
+    {
+      "_id": "req_login",
+      "_type": "request",
+      "parentId": "fld_employee_api",
+      "name": "Login (form) - POST /api/login",
+      "method": "POST",
+      "url": "{{ base_url }}/api/login",
+      "body": {
+        "mimeType": "application/x-www-form-urlencoded",
+        "params": [
+          {
+            "name": "username",
+            "value": "{{ employer_user }}",
+            "id": "p_login_username"
+          },
+          {
+            "name": "password",
+            "value": "{{ employer_pass }}",
+            "id": "p_login_password"
+          }
+        ]
+      },
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "settings": {
+        "authentication": {}
+      }
+    },
+    {
+      "_id": "req_get_all",
+      "_type": "request",
+      "parentId": "fld_employee_api",
+      "name": "GET /api/v1/employee (list)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/employee",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_one",
+      "_type": "request",
+      "parentId": "fld_employee_api",
+      "name": "GET /api/v1/employee/{id}",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/employee/{{ employee_id }}",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_create",
+      "_type": "request",
+      "parentId": "fld_employee_api",
+      "name": "POST /api/v1/employee (create)",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/employee",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"firstname\": \"Jean\",\n  \"secondeName\": \"Dupont\",\n  \"username\": \"j.dupont\",\n  \"password\": \"password123\",\n  \"phone\": \"+33123456789\",\n  \"post\": \"SALESPERSON\",\n  \"store\": null,\n  \"employer\": null,\n  \"status\": \"DISCONNECTED\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_patch",
+      "_type": "request",
+      "parentId": "fld_employee_api",
+      "name": "PATCH /api/v1/employee/{id} (update)",
+      "method": "PATCH",
+      "url": "{{ base_url }}/api/v1/employee/{{ employee_id }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"firstname\": \"Jean\",\n  \"secondeName\": \"Dupont\",\n  \"username\": \"j.dupont\",\n  \"password\": \"newpass456\",\n  \"phone\": \"+33198765432\",\n  \"post\": \"CASHIER\",\n  \"store\": null,\n  \"employer\": null,\n  \"status\": \"CONNECTED\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_delete",
+      "_type": "request",
+      "parentId": "fld_employee_api",
+      "name": "DELETE /api/v1/employee/{id}",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v1/employee/{{ employee_id }}",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_notes",
+      "_type": "request",
+      "parentId": "fld_employee_api",
+      "name": "Notes d'utilisation (ne pas exécuter)",
+      "method": "GET",
+      "url": "{{ base_url }}/",
+      "body": {
+        "mimeType": "text/plain",
+        "text": "Instructions: 1) Exécutez la requête \"Login (form) - POST /api/login\" avec un utilisateur employer (par défaut tera/rema) avant les requêtes protégées ; Insomnia stockera le cookie JSESSIONID automatiquement. 2) Pour créer un employee: POST /api/v1/employee (body JSON). 3) Dans la réponse de création, copiez l'id (UUID) et collez-le dans la variable d'environnement \"employee_id\" (ou modifiez la variable dans l'environnement). 4) Lancez GET/PATCH/DELETE en utilisant cette id. 5) Pour lister tous les employees en tant qu'admin, faites Login avec admin (wess/rema) puis GET /api/v1/employee.\n\nRemarque: les champs `store` et `employer` dans les bodies sont laissés à null volontairement comme demandé."
+      },
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "text/plain"
+        }
+      ]
+    }
+  ]
+}

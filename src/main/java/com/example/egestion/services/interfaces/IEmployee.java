@@ -12,6 +12,6 @@ public interface IEmployee {
     Employee update(Employee employee, UUID id) throws UpdateFailedException, NotAuthenticatedException, AccessDeniedException,NotAuthorizedException,ElementNotFoundException;
     void delete(UUID id) throws  NotAuthenticatedException, AccessDeniedException,NotAuthorizedException,ElementNotFoundException;
     List<Employee> getAll() throws  NotAuthenticatedException, AccessDeniedException,NotAuthorizedException;
-    Employee getOne(UUID id) throws ElementNotFoundException ;
+    Employee getOne(UUID id) throws ElementNotFoundException, NotAuthenticatedException, NotAuthorizedException;
 
 }

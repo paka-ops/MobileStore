@@ -2,6 +2,8 @@ package com.example.egestion.models;
 
 import com.example.egestion.enums.Post;
 import com.example.egestion.enums.Status;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

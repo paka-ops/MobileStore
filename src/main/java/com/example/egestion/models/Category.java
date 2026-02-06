@@ -1,5 +1,6 @@
 package com.example.egestion.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ public class Category {
     private UUID id;
     private String name;
     @OneToMany(mappedBy = "category",orphanRemoval = true)
+    @JsonIgnore
     private List<Product> products = new ArrayList<>();
     @ManyToOne
     private Store store;

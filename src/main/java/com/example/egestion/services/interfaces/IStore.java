@@ -1,17 +1,19 @@
 package com.example.egestion.services.interfaces;
 
 import com.example.egestion.exceptions.*;
+import com.example.egestion.models.Employee;
 import com.example.egestion.models.Store;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface IStore {
-    List<Store> getAll() throws AccessDeniedException, NotAuthenticatedException;
+    List<Store> getAll() throws AccessDeniedException, NotAuthenticatedException, NotAuthorizedException;
     Store getOne(UUID id) throws ElementNotFoundException, AccessDeniedException, NotAuthenticatedException, NotAuthorizedException;
     Store add(Store store) throws CreationFailedException, AccessDeniedException, NotAuthenticatedException, NotAuthorizedException;
     Store update(Store store,UUID id) throws UpdateFailedException, AccessDeniedException, NotAuthenticatedException, ElementNotFoundException, NotAuthorizedException;
     void delete(UUID id) throws ElementNotFoundException, AccessDeniedException, NotAuthenticatedException, NotAuthorizedException;
+    Store addEmployee(UUID storeId,UUID employeeId)throws ElementNotFoundException, AccessDeniedException, NotAuthenticatedException, NotAuthorizedException,ElementAddingFailedException;
 
 
 }

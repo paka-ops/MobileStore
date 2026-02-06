@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 @Service
 public class EmployerService implements IEmployer{
@@ -54,8 +55,9 @@ public class EmployerService implements IEmployer{
     @Override
     @PreAuthorize("ADMIN")
     public Employer getOne(UUID id) throws ElementNotFoundException {
-        return employerRepository.findById(id)
-                .orElseThrow(()-> new ElementNotFoundException("element not found: employer not found"));
+        Optional<Employer> employer  = employerRepository.findById(id) ;
+        if(employer.isEmpty()) throw new ElementNotFoundException("element not found: employer not found");
+        return employer.get();
     }
 
    

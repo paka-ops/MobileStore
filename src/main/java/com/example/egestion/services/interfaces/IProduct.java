@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IProduct {
-    Product add(Product product) throws CreationFailedException, NotAuthenticatedException, AccessDeniedException,NotAuthorizedException;
+    Product add(Product product,UUID categorieId) throws CreationFailedException, NotAuthenticatedException, AccessDeniedException, NotAuthorizedException, ElementNotFoundException;
     Product update(Product product, UUID id) throws UpdateFailedException, NotAuthenticatedException, AccessDeniedException,NotAuthorizedException, ElementNotFoundException;
     void delete(UUID productId) throws UpdateFailedException, NotAuthenticatedException, AccessDeniedException, NotAuthorizedException, ElementNotFoundException;
-    List<Product> getAll() throws AccessDeniedException, NotAuthenticatedException;
+    List<Product> getAll() throws AccessDeniedException, NotAuthenticatedException, NotAuthorizedException;
     Product getOne(UUID id) throws ElementNotFoundException;
 }

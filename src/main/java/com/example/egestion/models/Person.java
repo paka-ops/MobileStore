@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.UUID;
 
@@ -18,11 +19,13 @@ import java.util.UUID;
 public abstract class Person {
     @Id @GeneratedValue
     @UuidGenerator(style = UuidGenerator.Style.TIME)
+
     private UUID id;
     private String firstname;
     private String secondeName;
     private String phone;
     private String password;
+    @Column(unique = true)
     private String username;
 
 

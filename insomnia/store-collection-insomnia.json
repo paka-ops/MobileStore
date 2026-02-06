@@ -1,0 +1,196 @@
+{
+  "__export_format": 4,
+  "__export_date": "2026-02-06T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:generated",
+  "resources": [
+    {
+      "_id": "wrk_eGestion_stores",
+      "_type": "workspace",
+      "name": "eGestion - Store API",
+      "description": "Workspace pour tester StoreController (session-based via /api/login)",
+      "scope": "collection",
+      "created": 0,
+      "modified": 0,
+      "parentId": null
+    },
+    {
+      "_id": "env_eGestion_stores",
+      "_type": "environment",
+      "parentId": "wrk_eGestion_stores",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8080",
+        "employer_user": "tera",
+        "employer_pass": "rema",
+        "admin_user": "wess",
+        "admin_pass": "rema",
+        "store_id": "",
+        "employee_id": ""
+      },
+      "metaSortKey": -1,
+      "created": 0,
+      "modified": 0
+    },
+    {
+      "_id": "jar_eGestion_stores",
+      "_type": "cookie_jar",
+      "parentId": "wrk_eGestion_stores",
+      "cookies": []
+    },
+    {
+      "_id": "fld_store_api",
+      "_type": "request_group",
+      "parentId": "wrk_eGestion_stores",
+      "name": "Store API",
+      "description": "Requêtes pour /api/v1/stores",
+      "environment": {}
+    },
+    {
+      "_id": "req_login_store",
+      "_type": "request",
+      "parentId": "fld_store_api",
+      "name": "Login (form) - POST /api/login",
+      "method": "POST",
+      "url": "{{ base_url }}/api/login",
+      "body": {
+        "mimeType": "application/x-www-form-urlencoded",
+        "params": [
+          {
+            "name": "username",
+            "value": "{{ employer_user }}",
+            "id": "p_login_username_store"
+          },
+          {
+            "name": "password",
+            "value": "{{ employer_pass }}",
+            "id": "p_login_password_store"
+          }
+        ]
+      },
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_all_stores",
+      "_type": "request",
+      "parentId": "fld_store_api",
+      "name": "GET /api/v1/stores (list)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/stores",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_store",
+      "_type": "request",
+      "parentId": "fld_store_api",
+      "name": "GET /api/v1/stores/{id}",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/stores/{{ store_id }}",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_create_store",
+      "_type": "request",
+      "parentId": "fld_store_api",
+      "name": "POST /api/v1/stores (create)",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/stores",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Magasin Central\",\n  \"localisation\": \"Paris\",\n  \"employee\": null,\n  \"employer\": null,\n  \"categories\": null\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_patch_store",
+      "_type": "request",
+      "parentId": "fld_store_api",
+      "name": "PATCH /api/v1/stores/{id} (update)",
+      "method": "PATCH",
+      "url": "{{ base_url }}/api/v1/stores/{{ store_id }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Magasin Centre Ville\",\n  \"localisation\": \"Lyon\",\n  \"employee\": null,\n  \"employer\": null,\n  \"categories\": null\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_delete_store",
+      "_type": "request",
+      "parentId": "fld_store_api",
+      "name": "DELETE /api/v1/stores/{id}",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v1/stores/{{ store_id }}",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_add_employee_to_store",
+      "_type": "request",
+      "parentId": "fld_store_api",
+      "name": "POST /api/v1/stores/{storeId}/{employeeId} (add employee)",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/stores/{{ store_id }}/{{ employee_id }}",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_notes_store",
+      "_type": "request",
+      "parentId": "fld_store_api",
+      "name": "Notes d'utilisation (ne pas exécuter)",
+      "method": "GET",
+      "url": "{{ base_url }}/",
+      "body": {
+        "mimeType": "text/plain",
+        "text": "Instructions:\n1) Exécutez la requête 'Login (form) - POST /api/login' (employer par défaut tera/rema) avant les requêtes protégées ; Insomnia stockera le cookie JSESSIONID automatiquement.\n2) Créez un store via POST /api/v1/stores, copiez l'id retourné et collez-le dans la variable d'environnement 'store_id'.\n3) Utilisez GET / PATCH / DELETE sur /api/v1/stores/{{ store_id }}.\n4) Pour ajouter un employé au magasin, remplissez 'store_id' et 'employee_id' dans l'environnement et exécutez la requête POST /api/v1/stores/{{ store_id }}/{{ employee_id }}.\nRemarque: les associations 'employee' et 'employer' dans les bodies sont laissées à null comme demandé."
+      },
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "text/plain"
+        }
+      ]
+    }
+  ]
+}

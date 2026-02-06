@@ -1,5 +1,6 @@
 package com.example.egestion.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -17,6 +18,7 @@ public class Product {
     private UUID id;
     private String name;
     private int quantity;
+
     @ManyToOne
     private Category category;
 }

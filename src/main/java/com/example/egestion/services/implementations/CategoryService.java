@@ -6,7 +6,7 @@ import com.example.egestion.models.Employer;
 import com.example.egestion.models.Store;
 import com.example.egestion.repositories.CategoryRepository;
 import com.example.egestion.repositories.StoreRepository;
-import com.example.egestion.security.SecCheck;
+import com.example.egestion.security.SecurityValidator;
 import com.example.egestion.services.interfaces.ICategory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,19 +18,13 @@ import java.util.Optional;
 import java.util.UUID;
 @Service
 public class CategoryService implements ICategory {
-    private final SecCheck secCheck;
+    private final SecurityValidator secCheck;
     private final CategoryRepository categoryRepository;
     private final StoreService storeService;
     private final StoreRepository storeRepository;
-    private boolean isOwnerOfCategory(Category category){
-        Store store = category.getStore();
-        Authentication auth = secCheck.getAuthentication();
-        Employer employer = secCheck.findUserFromAuthentication(auth, Employer.class);
-        secCheck.isOwnerOfStore(employer,store);
-        return true;
-    }
 
-    public CategoryService(CategoryRepository categoryRepository, SecCheck secCheck, StoreService storeService, StoreRepository storeRepository){
+
+    public CategoryService(CategoryRepository categoryRepository, SecurityValidator secCheck, StoreService storeService, StoreRepository storeRepository){
         this.secCheck = secCheck;
         this.categoryRepository = categoryRepository;
         this.storeService = storeService;
@@ -41,16 +35,14 @@ public class CategoryService implements ICategory {
         this.secCheck.hasRole("ROLE_EMPLOYER");
         Optional<Store> store = storeRepository.findById(storeId);
         if(store.isEmpty()) throw new ElementNotFoundException("Store not found");
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Employer employer = secCheck.findUserFromAuthentication(auth,Employer.class);
-        secCheck.isOwnerOfStore(employer,store.get());
+        secCheck.validateStoreAccess(storeId);
         category.setStore(store.get());
         return categoryRepository.save(category);
     }
     @Override
     public Category update(Category category, UUID id) throws UpdateFailedException, UpdateFailedException, NotAuthenticatedException, AccessDeniedException, NotAuthorizedException, ElementNotFoundException {
         this.secCheck.hasRole("ROLE_EMPLOYER");
-        this.isOwnerOfCategory(category);
+        secCheck.validateCategoryAccess(category.getId());
         Optional<Category> category1 = categoryRepository.findById(category.getId());
         if(category1.isEmpty()) throw new ElementNotFoundException("Category not found");
         if(category.getName() != null){
@@ -66,9 +58,9 @@ public class CategoryService implements ICategory {
     @Override
     public void delete(UUID categoryId) throws ElementNotFoundException, NotAuthenticatedException, AccessDeniedException, NotAuthorizedException {
         this.secCheck.hasRole("ROLE_EMPLOYER");
-        Optional<Category> category = categoryRepository.findById(categoryId);
-        if(category.isEmpty()) throw new ElementNotFoundException("Category not found ");
-        this.isOwnerOfCategory(category.get());
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(()-> new ElementNotFoundException("Category not found "));
+        secCheck.validateCategoryAccess(category.getId());
         categoryRepository.deleteById(categoryId);
     }
 
@@ -92,10 +84,10 @@ public class CategoryService implements ICategory {
     }
 
     @Override
-    public Category getOne(UUID id) throws ElementNotFoundException, NotAuthenticatedException, NotAuthorizedException {
+    public Category getOne(UUID id) throws ElementNotFoundException, NotAuthenticatedException, NotAuthorizedException, AccessDeniedException {
         secCheck.hasRole("EMPLOYER");
         Category category = categoryRepository.findById(id).orElseThrow(()->new ElementNotFoundException("element not found"));
-        this.isOwnerOfCategory(category);
+        secCheck.validateCategoryAccess(category.getId());
         return category;
     }
 

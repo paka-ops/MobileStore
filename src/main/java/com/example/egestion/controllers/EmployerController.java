@@ -57,14 +57,9 @@ public class EmployerController {
     }
     @PostMapping()
     public ResponseEntity create(@RequestBody Employer employer){
-        try{
-            Employer emp = emService.create(employer);
-            return  ResponseEntity.status(HttpStatus.CREATED)
-                    .body(responseBuilder.responseBody("CREATED","Creation successfully",emp));
-        } catch (CreationFailedException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(responseBuilder.responseBody("INTERNAL_SERVER_ERROR",e.getMessage()));
-        }
+        Employer emp = emService.create(employer);
+        return  ResponseEntity.status(HttpStatus.CREATED)
+                .body(responseBuilder.responseBody("CREATED","Creation successfully",emp));
     }
 
 

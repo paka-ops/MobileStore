@@ -27,100 +27,39 @@ public class StoreController {
     }
     @GetMapping(produces = "application/json")
     public ResponseEntity getAll(){
-        try{
-            List<Store> stores = storeService.getAll();
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(res.responseBody("OK","FOUND",stores));
-        } catch (AccessDeniedException e) {
-            return res.AccessDeniedResponse(e);
-        } catch (NotAuthenticatedException e) {
-            return res.NotAuthenticatedResponse(e);
-        } catch (NotAuthorizedException e) {
-            return res.NotAuthorizedResponse(e);
-        }
+        List<Store> stores = storeService.getAll();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(res.responseBody("OK","FOUND",stores));
     }
     @GetMapping("/{id}")
     public ResponseEntity getOne(@PathVariable UUID id){
-        try{
-            Store store = storeService.getOne(id);
-            return ResponseEntity.status(HttpServletResponse.SC_OK)
-                    .body(res.responseBody("OK","FOUND",store));
-        } catch (AccessDeniedException e) {
-            return res.AccessDeniedResponse(e);
-        } catch (NotAuthenticatedException e) {
-            return res.NotAuthenticatedResponse(e);
-        } catch (ElementNotFoundException e) {
-            return res.ElementNotFoundResponse(e);
-        } catch (NotAuthorizedException e) {
-           return res.NotAuthorizedResponse(e);
-        }
+        Store store = storeService.getOne(id);
+        return ResponseEntity.status(HttpServletResponse.SC_OK)
+                .body(res.responseBody("OK","FOUND",store));
     }
     @PostMapping
     public ResponseEntity create(@RequestBody Store store){
-        try{
-            Store store1 =  storeService.add(store);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(res.responseBody("CREATED","CREATION SUCCESSFULLY",store));
-        } catch (NotAuthenticatedException e) {
-            return res.NotAuthenticatedResponse(e);
-        } catch (CreationFailedException e) {
-            return res.CreationFailedResponse(e);
-        } catch (NotAuthorizedException e) {
-            return res.NotAuthorizedResponse(e);
-        }
+        Store store1 =  storeService.add(store);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(res.responseBody("CREATED","CREATION SUCCESSFULLY",store));
     }
     @PatchMapping("/{id}")
     public  ResponseEntity update(@RequestBody Store store,@PathVariable UUID id){
-        try{
-            Store store1 = storeService.update(store, id);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(res.responseBody("OK","UPDATE SUCCESSFULLY",store1));
-        } catch (AccessDeniedException e) {
-            return res.AccessDeniedResponse(e);
-        } catch (NotAuthenticatedException e) {
-            return res.NotAuthenticatedResponse(e);
-        } catch (ElementNotFoundException e) {
-            return res.ElementNotFoundResponse(e);
-        } catch (NotAuthorizedException e) {
-            return res.NotAuthorizedResponse(e);
-        } catch (UpdateFailedException e) {
-            return res.UpdateFailedResponse(e);
-        }
-
+        Store store1 = storeService.update(store, id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(res.responseBody("OK","UPDATE SUCCESSFULLY",store1));
     }
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable UUID id){
-        try{
-            storeService.delete(id);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(res.responseBody("OK","DELETED SUCCESSFULLY"));
-        } catch (AccessDeniedException e) {
-            return res.AccessDeniedResponse(e);
-        } catch (NotAuthenticatedException e) {
-            return res.NotAuthenticatedResponse(e);
-        } catch (ElementNotFoundException e) {
-            return res.ElementNotFoundResponse(e);
-        } catch (NotAuthorizedException e) {
-            return res.NotAuthorizedResponse(e);
-        }
+        storeService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(res.responseBody("OK","DELETED SUCCESSFULLY"));
     }
     @PostMapping("/{storeId}/{employeeId}")
     public ResponseEntity addEmployee(@PathVariable UUID storeId,@PathVariable UUID employeeId){
-        try{
-            Store store = storeService.addEmployee(storeId,employeeId);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(res.responseBody("OK","EMPLOYEE ADDING SUCCESSFULLY",store));
-        } catch (AccessDeniedException e) {
-            return res.AccessDeniedResponse(e);
-        } catch (NotAuthenticatedException e) {
-            return res.NotAuthenticatedResponse(e);
-        } catch (ElementAddingFailedException e) {
-            return res.elementAddingFailedResponse(e);
-        } catch (ElementNotFoundException e) {
-            return res.ElementNotFoundResponse(e);
-        } catch (NotAuthorizedException e) {
-            return res.NotAuthorizedResponse(e);
-        }
+        Store store = storeService.addEmployee(storeId,employeeId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(res.responseBody("OK","EMPLOYEE ADDING SUCCESSFULLY",store));
     }
 
 

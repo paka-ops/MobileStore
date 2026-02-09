@@ -8,5 +8,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface OrderRepository extends JpaRepository<Order,UUID> {
-   List<Order> findAllByMaker(Person person);
+   List<Order> findAllByMaker(UUID makerId);
+   boolean exitsOrderByStore(UUID storeId);
+   List<Order> findAllByStore(UUID storeId);
+   Order findOrderByStore(UUID orderId,UUID storeId);
 }

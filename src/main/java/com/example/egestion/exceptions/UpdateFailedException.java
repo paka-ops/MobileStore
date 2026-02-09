@@ -1,6 +1,6 @@
 package com.example.egestion.exceptions;
 
-public class UpdateFailedException extends Exception{
+public class UpdateFailedException extends RuntimeException{
     public UpdateFailedException(String message){
         super(message);
     }

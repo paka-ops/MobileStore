@@ -12,5 +12,5 @@ public interface ICategory {
     void  delete(UUID categoryId) throws ElementNotFoundException, UpdateFailedException, NotAuthenticatedException, AccessDeniedException,NotAuthorizedException,ElementNotFoundException;
     List<Category> getAll() throws UpdateFailedException, NotAuthenticatedException, AccessDeniedException,NotAuthorizedException,ElementNotFoundException;
     List<Category> getAllByStore(UUID storeId) throws ElementNotFoundException, AccessDeniedException, NotAuthenticatedException, NotAuthorizedException;
-    Category getOne(UUID id) throws ElementNotFoundException, NotAuthenticatedException, NotAuthorizedException;
+    Category getOne(UUID id) throws ElementNotFoundException, NotAuthenticatedException, NotAuthorizedException, AccessDeniedException;
 }

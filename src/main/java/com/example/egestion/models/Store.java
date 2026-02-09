@@ -26,6 +26,8 @@ public class Store {
     List<Employee> employees = new ArrayList<>();
     @ManyToOne
     private Employer employer;
+    @OneToMany(mappedBy = "store")
+    private List<Order> order;
     @OneToMany(mappedBy = "store", orphanRemoval = true)
     @JsonIgnore
     private List<Category>categories = new ArrayList<>();

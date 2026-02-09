@@ -28,82 +28,33 @@ public class EmployeeController {
 
     @GetMapping(produces = "application/json")
     public ResponseEntity getAll(){
-        try{
-            List<Employee> employees = emService.getAll();
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(response.responseBody("OK","Found",employees));
-        } catch (AccessDeniedException e) {
-            return response.AccessDeniedResponse(e);
-        } catch (NotAuthenticatedException e) {
-            return response.NotAuthenticatedResponse(e);
-        } catch (NotAuthorizedException e) {
-            return response.NotAuthorizedResponse(e);
-        }
-
+        List<Employee> employees = emService.getAll();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response.responseBody("OK","Found",employees));
     }
     @GetMapping("/{id}")
     public ResponseEntity getOne(@PathVariable UUID id){
-        try{
-            Employee employee = emService.getOne(id);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(response.responseBody("OK","FOUND",employee));
-        } catch (NotAuthenticatedException e) {
-            return response.NotAuthenticatedResponse(e);
-        } catch (NotAuthorizedException e) {
-            return response.NotAuthorizedResponse(e);
-        }catch (ElementNotFoundException e){
-            return response.ElementNotFoundResponse(e);
-        }
+        Employee employee = emService.getOne(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response.responseBody("OK","FOUND",employee));
     }
     @PostMapping(consumes = "application/json")
     public ResponseEntity create(@RequestBody Employee employee){
-        try{
-            Employee employee1 = emService.create(employee);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(response.responseBody("CREATED","CREATION SUCCESSFULLY",employee1));
-        } catch (NotAuthenticatedException e) {
-            return response.NotAuthenticatedResponse(e);
-        } catch (NotAuthorizedException e) {
-            return response.NotAuthorizedResponse(e);
-        }catch (AccessDeniedException e) {
-            return response.AccessDeniedResponse(e);
-        } catch (CreationFailedException e) {
-            return response.CreationFailedResponse(e);
-        }
+        Employee employee1 = emService.create(employee);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(response.responseBody("CREATED","CREATION SUCCESSFULLY",employee1));
     }
     @PatchMapping("/{employeeId}")
     public  ResponseEntity update(@RequestBody Employee employee,@PathVariable UUID employeeId){
-        try{
-            Employee employee1 = emService.update(employee,employeeId);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(response.responseBody("CREATED","UPDATE SUCCESSFULLY",employee1));
-        } catch (AccessDeniedException e) {
-            return response.AccessDeniedResponse(e);
-        } catch (NotAuthenticatedException e) {
-            return response.NotAuthenticatedResponse(e);
-        } catch (ElementNotFoundException e) {
-            return response.ElementNotFoundResponse(e);
-        } catch (NotAuthorizedException e) {
-            return response.NotAuthorizedResponse(e);
-        } catch (UpdateFailedException e) {
-            return response.UpdateFailedResponse(e);
-        }
+        Employee employee1 = emService.update(employee,employeeId);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(response.responseBody("CREATED","UPDATE SUCCESSFULLY",employee1));
     }
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable UUID id){
-        try{
-            emService.delete(id);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(response.responseBody("OK","DELETED SUCCESSFULLY"));
-        } catch (AccessDeniedException e) {
-            return response.AccessDeniedResponse(e);
-        } catch (NotAuthenticatedException e) {
-            return response.NotAuthenticatedResponse(e);
-        } catch (ElementNotFoundException e) {
-            return response.ElementNotFoundResponse(e);
-        } catch (NotAuthorizedException e) {
-            return response.NotAuthorizedResponse(e);
-        }
+        emService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response.responseBody("OK","DELETED SUCCESSFULLY"));
     }
 
 }

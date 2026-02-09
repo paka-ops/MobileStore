@@ -1,0 +1,270 @@
+{
+  "__export_format": 4,
+  "__export_date": "2026-02-08T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:generated",
+  "resources": [
+    {
+      "_id": "wrk_product_ctrl",
+      "_type": "workspace",
+      "name": "eGestion - Product Controller API",
+      "description": "Collection pour tester ProductController",
+      "scope": "collection",
+      "created": 0,
+      "modified": 0,
+      "parentId": null
+    },
+    {
+      "_id": "env_product_ctrl",
+      "_type": "environment",
+      "parentId": "wrk_product_ctrl",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8080",
+        "employer_user": "tera",
+        "employer_pass": "rema",
+        "employee_user": "jean",
+        "employee_pass": "rema",
+        "store_id": "",
+        "category_id": "",
+        "product_id": ""
+      },
+      "metaSortKey": -1,
+      "created": 0,
+      "modified": 0
+    },
+    {
+      "_id": "jar_product_ctrl",
+      "_type": "cookie_jar",
+      "parentId": "wrk_product_ctrl",
+      "cookies": []
+    },
+    {
+      "_id": "fld_product_api",
+      "_type": "request_group",
+      "parentId": "wrk_product_ctrl",
+      "name": "Product Controller API",
+      "description": "Requêtes pour ProductController",
+      "environment": {}
+    },
+    {
+      "_id": "fld_auth",
+      "_type": "request_group",
+      "parentId": "fld_product_api",
+      "name": "Authentication",
+      "description": "Requêtes de connexion",
+      "environment": {}
+    },
+    {
+      "_id": "req_login_employer",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Login (Employer) - POST /api/login",
+      "method": "POST",
+      "url": "{{ base_url }}/api/login",
+      "body": {
+        "mimeType": "application/x-www-form-urlencoded",
+        "params": [
+          {
+            "name": "username",
+            "value": "{{ employer_user }}",
+            "id": "p_login_username"
+          },
+          {
+            "name": "password",
+            "value": "{{ employer_pass }}",
+            "id": "p_login_password"
+          }
+        ]
+      },
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "settings": {
+        "authentication": {}
+      }
+    },
+    {
+      "_id": "req_login_employee",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Login (Employee) - POST /api/login",
+      "method": "POST",
+      "url": "{{ base_url }}/api/login",
+      "body": {
+        "mimeType": "application/x-www-form-urlencoded",
+        "params": [
+          {
+            "name": "username",
+            "value": "{{ employee_user }}",
+            "id": "p_login_username"
+          },
+          {
+            "name": "password",
+            "value": "{{ employee_pass }}",
+            "id": "p_login_password"
+          }
+        ]
+      },
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "settings": {
+        "authentication": {}
+      }
+    },
+    {
+      "_id": "fld_product_read",
+      "_type": "request_group",
+      "parentId": "fld_product_api",
+      "name": "Product Read (GET)",
+      "description": "Requêtes de lecture des produits",
+      "environment": {}
+    },
+    {
+      "_id": "req_get_all_by_store",
+      "_type": "request",
+      "parentId": "fld_product_read",
+      "name": "GET /api/v1/products/?storeId={storeId}",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/products/?storeId={{ store_id }}",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_all_by_category",
+      "_type": "request",
+      "parentId": "fld_product_read",
+      "name": "GET /api/v1/products/?categoryId={categoryId}",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/products/?categoryId={{ category_id }}",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_one_by_category",
+      "_type": "request",
+      "parentId": "fld_product_read",
+      "name": "GET /api/v1/products/{productId}?categoryId={categoryId}",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/products/{{ product_id }}?categoryId={{ category_id }}",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_one_by_store",
+      "_type": "request",
+      "parentId": "fld_product_read",
+      "name": "GET /api/v1/products/{productId}?storeId={storeId}",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/products/{{ product_id }}?storeId={{ store_id }}",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "fld_product_write",
+      "_type": "request_group",
+      "parentId": "fld_product_api",
+      "name": "Product Write (POST/PATCH/DELETE)",
+      "description": "Opérations de création, modification et suppression",
+      "environment": {}
+    },
+    {
+      "_id": "req_add_product",
+      "_type": "request",
+      "parentId": "fld_product_write",
+      "name": "POST /api/v1/products?categoryId={categoryId}",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/products?categoryId={{ category_id }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Product Test 001\",\n  \"quantity\": 100,\n  \"category\": null\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_update_product",
+      "_type": "request",
+      "parentId": "fld_product_write",
+      "name": "PATCH /api/v1/products/{productId}",
+      "method": "PATCH",
+      "url": "{{ base_url }}/api/v1/products/{{ product_id }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Product Updated 001\",\n  \"quantity\": 150,\n  \"category\": null\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_delete_product",
+      "_type": "request",
+      "parentId": "fld_product_write",
+      "name": "DELETE /api/v1/products/{productId}",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v1/products/{{ product_id }}",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_notes",
+      "_type": "request",
+      "parentId": "fld_product_api",
+      "name": "📋 Instructions d'utilisation",
+      "method": "GET",
+      "url": "{{ base_url }}/",
+      "body": {
+        "mimeType": "text/plain",
+        "text": "INSTRUCTIONS POUR TESTER LE PRODUCTCONTROLLER\n\n1. AUTHENTIFICATION\n   - Exécutez d'abord une requête de connexion (Login Employer ou Login Employee)\n   - Insomnia stockera automatiquement le cookie JSESSIONID\n   - Les requêtes suivantes utiliseront cette session\n\n2. CONFIGURATION DES VARIABLES D'ENVIRONNEMENT\n   - store_id : UUID d'un Store existant\n   - category_id : UUID d'une Category existante\n   - product_id : Sera généré après création d'un produit\n\n3. ENDPOINTS DISPONIBLES\n\n   a) LECTURE PAR STORE\n      GET /api/v1/products/?storeId={storeId}\n      - Liste tous les produits d'un store\n\n   b) LECTURE PAR CATEGORY\n      GET /api/v1/products/?categoryId={categoryId}\n      - Liste tous les produits d'une catégorie\n\n   c) GET UN PRODUIT PAR CATEGORY\n      GET /api/v1/products/{productId}?categoryId={categoryId}\n      - Récupère un produit spécifique dans une catégorie\n\n   d) GET UN PRODUIT PAR STORE\n      GET /api/v1/products/{productId}?storeId={storeId}\n      - Récupère un produit spécifique dans un store\n\n   e) CRÉER UN PRODUIT\n      POST /api/v1/products?categoryId={categoryId}\n      Body JSON:\n      {\n        \"name\": \"Nom du produit\",\n        \"quantity\": 50,\n        \"category\": null\n      }\n      - Crée un nouveau produit dans une catégorie\n\n   f) METTRE À JOUR UN PRODUIT\n      PATCH /api/v1/products/{productId}\n      Body JSON:\n      {\n        \"name\": \"Nouveau nom\",\n        \"quantity\": 75,\n        \"category\": null\n      }\n      - Met à jour les propriétés d'un produit existant\n\n   g) SUPPRIMER UN PRODUIT\n      DELETE /api/v1/products/{productId}\n      - Supprime un produit\n\n4. FLUX DE TEST RECOMMANDÉ\n   1) Login (Employer ou Employee)\n   2) Créer un produit : POST /api/v1/products?categoryId=...\n   3) Copier l'ID du produit créé dans la variable 'product_id'\n   4) Tester les lectures : GET avec storeId ou categoryId\n   5) Mettre à jour : PATCH /api/v1/products/{productId}\n   6) Supprimer : DELETE /api/v1/products/{productId}\n\n5. REMARQUES\n   - Tous les UUIDs (product_id, category_id, store_id) sont auto-générés\n   - Le champ 'category' doit rester null dans le body JSON\n   - L'association avec Category se fait via le paramètre 'categoryId' en query string\n   - Les paramètres sont passés via query string (?) et non en path variable"
+      },
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "text/plain"
+        }
+      ]
+    }
+  ]
+}

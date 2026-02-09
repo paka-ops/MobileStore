@@ -24,5 +24,7 @@ public class Order {
     private Date creationDate;
     @ManyToOne
     private Person maker;
+    @ManyToOne
+    private Store store;
 
 }

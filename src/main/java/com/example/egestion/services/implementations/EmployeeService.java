@@ -3,10 +3,9 @@ package com.example.egestion.services.implementations;
 import com.example.egestion.exceptions.*;
 import com.example.egestion.models.Employee;
 import com.example.egestion.models.Employer;
-import com.example.egestion.models.Person;
 import com.example.egestion.repositories.EmployeeRepository;
 import com.example.egestion.repositories.PersonRepository;
-import com.example.egestion.security.SecCheck;
+import com.example.egestion.security.SecurityValidator;
 import com.example.egestion.services.interfaces.IEmployee;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -19,11 +18,11 @@ import java.util.UUID;
 @Service
 public class EmployeeService implements IEmployee  {
     private final EmployeeRepository employeeRepository;
-    private  final SecCheck  secCheck;
+    private  final SecurityValidator secCheck;
     private final PersonRepository personRepository;
     private final PasswordEncoder encoder;
 
-    public EmployeeService(EmployeeRepository employeeRepository, SecCheck secCheck, PersonRepository personRepository, PasswordEncoder encoder){
+    public EmployeeService(EmployeeRepository employeeRepository, SecurityValidator secCheck, PersonRepository personRepository, PasswordEncoder encoder){
         this.employeeRepository = employeeRepository;
         this.secCheck = secCheck;
         this.personRepository = personRepository;
@@ -31,12 +30,11 @@ public class EmployeeService implements IEmployee  {
     }
 
     @Override
+    @PreAuthorize("hasRole('EMPLOYER')")
     public Employee create(Employee employee) throws CreationFailedException,
             NotAuthenticatedException, AccessDeniedException, NotAuthorizedException {
-            this.secCheck.hasRole("EMPLOYER");
-            Authentication authEmp = SecurityContextHolder.getContext().getAuthentication();
-            String username = authEmp.getName();
-            Employer employer = (Employer) personRepository.findByUsername(username);
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            Employer employer = secCheck.findUserFromAuthentication(auth, Employer.class);
             try {
                 employee.setEmployer(employer);
                 Employee e = this.employeeRepository.save(employee);
@@ -47,15 +45,13 @@ public class EmployeeService implements IEmployee  {
     }
 
     @Override
+    @PreAuthorize("hasRole('EMPLOYER')")
     public Employee update(Employee employee, UUID id) throws UpdateFailedException, NotAuthenticatedException,
             AccessDeniedException, NotAuthorizedException,ElementNotFoundException {
-        this.secCheck.hasRole("EMPLOYER");
         Optional<Employee> employee1 = employeeRepository.findById(id);
         if(!employee1.isPresent()) throw new ElementNotFoundException("user not found ");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        Employer employer =(Employer) personRepository.findByUsername(username);
-        this.secCheck.isEmployeeOfEmployer(employer, employee1.get());
+
         try{
             employee.setId(id);
             if(employee.getUsername() != null){
@@ -100,7 +96,7 @@ public class EmployeeService implements IEmployee  {
         Optional<Employee> employee = employeeRepository.findById(id);
         if(!employee.isPresent()) throw new ElementNotFoundException("user not found ");
         Employer employer = (Employer) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        this.secCheck.isEmployeeOfEmployer(employer,employee.get());
+        this.secCheck.isEmployeeOfEmployer(employer.getId(),employee.get().getId());
         employeeRepository.deleteById(id);
     }
 

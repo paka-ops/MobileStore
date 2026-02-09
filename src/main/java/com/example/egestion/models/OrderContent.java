@@ -20,7 +20,6 @@ public class OrderContent {
     @OneToOne
     @JsonIgnore
     private Product product;
-
     @ManyToOne
     private Order order;
 

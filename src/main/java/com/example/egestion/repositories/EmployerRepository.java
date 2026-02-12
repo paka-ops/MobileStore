@@ -8,5 +8,4 @@ import java.util.UUID;
 
 public interface EmployerRepository extends JpaRepository<Employer, UUID> {
     UserDetails findByUsername(String username);
-    boolean existsEmployeeById(UUID employeeId,UUID employerId);
 }

@@ -8,6 +8,7 @@ import com.example.egestion.repositories.ProductRepository;
 import com.example.egestion.repositories.StoreRepository;
 import com.example.egestion.security.SecurityValidator;
 import com.example.egestion.services.interfaces.IProduct;
+import jakarta.transaction.Transactional;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,8 @@ public class ProductService implements IProduct {
                 .orElseThrow(()->new ElementNotFoundException("Categorie not found "));
         securityValidator.validateCategoryAccess(categoryId);
         product.setCategory(category);
-        return productRepository.save(product);
+        Product savingProduct =  productRepository.save(product);
+         return savingProduct;
     }
 
     @Override
@@ -47,7 +49,7 @@ public class ProductService implements IProduct {
     public Product update(Product product, UUID id) throws UpdateFailedException, NotAuthenticatedException, AccessDeniedException, NotAuthorizedException,ElementNotFoundException {
         this.securityValidator.hasRole("EMPLOYER");
         securityValidator.validateProductAccess(id);
-        Product pro = productRepository.getById(product.getId());
+        Product pro = productRepository.getReferenceById(product.getId());
         if(product.getName() != null){
             pro.setName(product.getName());
         }if(product.getCategory() != null){
@@ -69,7 +71,7 @@ public class ProductService implements IProduct {
     @PreAuthorize("hasRole('EMPLOYER')||hasRole('EMPLOYEE')")
     public List<Product> getAllByStore(UUID storeId) throws AccessDeniedException, NotAuthenticatedException, NotAuthorizedException, ElementNotFoundException {
         securityValidator.validateStoreAccess(storeId);
-        Store store = storeRepository.getById(storeId);
+        Store store = storeRepository.getReferenceById(storeId);
         List<Product> products = new ArrayList<>();
         for(Category cat : store.getCategories()){
             products.addAll(cat.getProducts());
@@ -111,6 +113,49 @@ public class ProductService implements IProduct {
     @Override
     public Product getProductByProductNameAndByCategory(String productName, UUID categoryId) {
         return null;
+    }
+
+    @Override
+    public Product incrementQty(double qty, Product product) {
+        double newQty = product.getQuantity() + qty;
+        product.setQuantity(newQty);
+        return update(product,product.getId());
+    }
+
+    @Override
+    public Product decrementQty(double qty, Product product) {
+        double newQty = product.getQuantity() - qty;
+        if(newQty <0) throw new OperationFailedException("Product out of stock");
+        product.setQuantity(newQty);
+        return update(product,product.getId());
+
+    }
+
+    @Override
+    public List<Product> incrementAllQtys(Map<Product, Double> productsQtys) {
+       return List.of();
+    }
+
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public List<Product> decrementAllQtys(Map<Product, Double> productsQtys) {
+        List<Product> products = new ArrayList<>(productsQtys.size());
+         productsQtys.forEach((product,qty)-> {
+            double newQty = product.getQuantity() - qty;
+            if(newQty<0) throw new OperationFailedException("Decremention opertation failed");
+            product.setQuantity(newQty);
+            products.add(product);
+        });
+         return updateAll(products);
+    }
+
+    @Override
+    /**
+     *  Update a list of bulk
+     *  <p>PreCondition: All securityCheck on productStore access right</p>
+     */
+    public List<Product> updateAll(List<Product> products) {
+        return productRepository.saveAll(products);
     }
 
 

@@ -14,22 +14,21 @@ import java.util.*;
 
 @Component
 public class SecurityValidator {
-    private final PersonRepository perRepo;
-    private final EmployeeRepository epRepository;
     private final PersonRepository personRepository;
     private final ProductRepository productRepository;
     private final StoreRepository storeRepository;
     private final CategoryRepository categoryRepository;
     private final EmployerRepository employerRepository;
+    private final EmployeeRepository employeeRepository;
 
-    public SecurityValidator(PersonRepository perRepo, EmployeeRepository epRepository, PersonRepository personRepository, ProductRepository productRepository, StoreRepository storeRepository, CategoryRepository categoryRepository, EmployerRepository employerRepository) {
-        this.perRepo = perRepo;
-        this.epRepository = epRepository;
+    public SecurityValidator( PersonRepository personRepository, ProductRepository productRepository, StoreRepository storeRepository, CategoryRepository categoryRepository, EmployerRepository employerRepository, EmployeeRepository employeeRepository) {
+
         this.personRepository = personRepository;
         this.productRepository = productRepository;
         this.storeRepository = storeRepository;
         this.categoryRepository = categoryRepository;
         this.employerRepository = employerRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     public boolean hasRole(String role) throws NotAuthenticatedException, NotAuthorizedException {
@@ -42,7 +41,8 @@ public class SecurityValidator {
         return true;
     }
     public boolean isEmployeeOfEmployer(UUID employerId,UUID employeeId){
-        if(!employerRepository.existsEmployeeById(employeeId,employerId)) return false;
+        boolean exist = employeeRepository.existsByIdAndEmployerId(employeeId,employerId);
+        if(!exist) return false;
         return true;
     }
     public <T extends  Person> T findUserFromAuthentication(Authentication auth, Class<T> clasz){
@@ -64,8 +64,8 @@ public class SecurityValidator {
                 throw new AccessDeniedException("You are not the owner of the store");
         }else if(hasRole("EMPLOYEE")){
             Employee employee = findUserFromAuthentication(auth,Employee.class);
-            if(!storeRepository.existsEmployeeById(employee.getId(),store.get().getId()))
-                throw new AccessDeniedException("You are not an employee of the store");
+            boolean exists = employeeRepository.existsByIdAndStoreId(employee.getId(),store.get().getId());
+            if(!exists) throw new AccessDeniedException("You are not an employee of the store");
         }else throw new AccessDeniedException("You are not a member of a store");
     }
     public void validateProductAccess(UUID productId) throws ElementNotFoundException, NotAuthenticatedException, NotAuthorizedException, AccessDeniedException {

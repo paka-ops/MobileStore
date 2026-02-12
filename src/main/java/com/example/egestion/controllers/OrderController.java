@@ -1,6 +1,7 @@
 package com.example.egestion.controllers;
 
 import com.example.egestion.configuration.ResponseBuilder;
+import com.example.egestion.dto.OrderDto;
 import com.example.egestion.models.Order;
 import com.example.egestion.services.implementations.OrderService;
 import org.springframework.http.HttpStatus;
@@ -45,7 +46,7 @@ public class OrderController {
                 .body(res.responseBody("OK","UPDATE SUCCESSFULLY",o));
     }
     @PostMapping(params = "storeId")
-    public ResponseEntity create(@RequestBody Order order,@RequestParam UUID storeId){
+    public ResponseEntity create(@RequestBody Order order, @RequestParam UUID storeId){
         Order o = orderService.create(order,storeId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(res.responseBody("OK","CREATION SUCCESSFULLY",o));

@@ -4,6 +4,7 @@ import com.example.egestion.models.Employer;
 import com.example.egestion.repositories.EmployerRepository;
 import com.example.egestion.services.interfaces.IEmployer;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,16 +13,19 @@ import java.util.UUID;
 @Service
 public class EmployerService implements IEmployer{
    private final EmployerRepository employerRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public EmployerService(EmployerRepository employerRepository) {
+    public EmployerService(EmployerRepository employerRepository, PasswordEncoder passwordEncoder) {
         this.employerRepository = employerRepository;
-
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     @PreAuthorize("ADMIN")
     public Employer create(Employer employer) throws CreationFailedException {
         try{
+            String password = passwordEncoder.encode(employer.getPassword());
+            employer.setPassword(password);
           Employer em =   employerRepository.save(employer);
           return em;
         }catch(Exception e){

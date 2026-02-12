@@ -10,6 +10,7 @@ import java.util.UUID;
 public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
 
     List<Employee> findEmployeesByEmployer(Employer employer);
-
+    boolean existsByIdAndEmployerId(UUID employeeId,UUID employerId);
+    boolean existsByIdAndStoreId(UUID employeeId,UUID storeId);
 
 }

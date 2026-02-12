@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.*;
@@ -17,10 +18,11 @@ import java.util.*;
 public class Order {
     @Id @GeneratedValue @UuidGenerator(style=UuidGenerator.Style.TIME)
     private UUID id;
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
     @JsonIgnore
     @MapKey(name="product")
     private Map<Product,OrderContent> products  = new TreeMap<>();
+    @CreationTimestamp
     private Date creationDate;
     @ManyToOne
     private Person maker;

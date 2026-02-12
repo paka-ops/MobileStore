@@ -21,22 +21,13 @@
       "name": "Base Environment",
       "data": {
         "base_url": "http://localhost:8080",
-        "employer_user": "tera",
-        "employer_pass": "rema",
-        "admin_user": "wess",
-        "admin_pass": "rema",
-        "order_id": "",
-        "product_id": ""
+        "store_id": "",
+        "employee_id": "",
+        "order_id": ""
       },
       "metaSortKey": -1,
       "created": 0,
       "modified": 0
-    },
-    {
-      "_id": "jar_order_controller",
-      "_type": "cookie_jar",
-      "parentId": "wrk_order_controller",
-      "cookies": []
     },
     {
       "_id": "fld_order_api",
@@ -47,41 +38,12 @@
       "environment": {}
     },
     {
-      "_id": "req_login_order",
+      "_id": "req_get_all_by_store",
       "_type": "request",
       "parentId": "fld_order_api",
-      "name": "Login (form) - POST /api/login",
-      "method": "POST",
-      "url": "{{ base_url }}/api/login",
-      "body": {
-        "mimeType": "application/x-www-form-urlencoded",
-        "params": [
-          {
-            "name": "username",
-            "value": "{{ employer_user }}",
-            "id": "p_login_username_order"
-          },
-          {
-            "name": "password",
-            "value": "{{ employer_pass }}",
-            "id": "p_login_password_order"
-          }
-        ]
-      },
-      "headers": [
-        {
-          "name": "Accept",
-          "value": "application/json"
-        }
-      ]
-    },
-    {
-      "_id": "req_get_all_orders",
-      "_type": "request",
-      "parentId": "fld_order_api",
-      "name": "GET /api/v1/orders (list)",
+      "name": "GET /api/v1/orders?storeId",
       "method": "GET",
-      "url": "{{ base_url }}/api/v1/orders",
+      "url": "{{ base_url }}/api/v1/orders?storeId={{ store_id }}",
       "headers": [
         {
           "name": "Accept",
@@ -90,12 +52,12 @@
       ]
     },
     {
-      "_id": "req_get_order",
+      "_id": "req_get_all_by_employee",
       "_type": "request",
       "parentId": "fld_order_api",
-      "name": "GET /api/v1/orders/{id}",
+      "name": "GET /api/v1/orders?employeeId",
       "method": "GET",
-      "url": "{{ base_url }}/api/v1/orders/{{ order_id }}",
+      "url": "{{ base_url }}/api/v1/orders?employeeId={{ employee_id }}",
       "headers": [
         {
           "name": "Accept",
@@ -104,21 +66,13 @@
       ]
     },
     {
-      "_id": "req_create_order",
+      "_id": "req_get_by_store",
       "_type": "request",
       "parentId": "fld_order_api",
-      "name": "POST /api/v1/orders (create)",
-      "method": "POST",
-      "url": "{{ base_url }}/api/v1/orders",
-      "body": {
-        "mimeType": "application/json",
-        "text": "{\n  \"productId\": \"{{ product_id }}\",\n  \"quantity\": 1\n}"
-      },
+      "name": "GET /api/v1/orders/{orderId}?storeId",
+      "method": "GET",
+      "url": "{{ base_url }}/api/v1/orders/{{ order_id }}?storeId={{ store_id }}",
       "headers": [
-        {
-          "name": "Content-Type",
-          "value": "application/json"
-        },
         {
           "name": "Accept",
           "value": "application/json"
@@ -126,10 +80,10 @@
       ]
     },
     {
-      "_id": "req_patch_order",
+      "_id": "req_update_order",
       "_type": "request",
       "parentId": "fld_order_api",
-      "name": "PATCH /api/v1/orders/{id} (update)",
+      "name": "PATCH /api/v1/orders/{orderId}",
       "method": "PATCH",
       "url": "{{ base_url }}/api/v1/orders/{{ order_id }}",
       "body": {
@@ -148,13 +102,21 @@
       ]
     },
     {
-      "_id": "req_delete_order",
+      "_id": "req_create_order",
       "_type": "request",
       "parentId": "fld_order_api",
-      "name": "DELETE /api/v1/orders/{id}",
-      "method": "DELETE",
-      "url": "{{ base_url }}/api/v1/orders/{{ order_id }}",
+      "name": "POST /api/v1/orders?storeId",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/orders?storeId={{ store_id }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"productId\": \"PRODUCT_ID\",\n  \"quantity\": 1\n}"
+      },
       "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
         {
           "name": "Accept",
           "value": "application/json"
@@ -162,20 +124,16 @@
       ]
     },
     {
-      "_id": "req_notes_order",
+      "_id": "req_delete_order",
       "_type": "request",
       "parentId": "fld_order_api",
-      "name": "Notes d'utilisation (ne pas exécuter)",
-      "method": "GET",
-      "url": "{{ base_url }}/",
-      "body": {
-        "mimeType": "text/plain",
-        "text": "Instructions:\n1) Exécutez la requête 'Login (form) - POST /api/login' (employer par défaut tera/rema) avant les requêtes protégées ; Insomnia stockera le cookie JSESSIONID automatiquement.\n2) Pour créer une commande, remplissez 'product_id' dans l'environnement et exécutez POST /api/v1/orders.\n3) Copiez l'id retourné et collez-le dans la variable d'environnement 'order_id' pour GET / PATCH / DELETE."
-      },
+      "name": "DELETE /api/v1/orders/{orderId}",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/v1/orders/{{ order_id }}",
       "headers": [
         {
           "name": "Accept",
-          "value": "text/plain"
+          "value": "application/json"
         }
       ]
     }

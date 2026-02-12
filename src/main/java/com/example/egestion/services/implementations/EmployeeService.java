@@ -22,6 +22,7 @@ public class EmployeeService implements IEmployee  {
     private final PersonRepository personRepository;
     private final PasswordEncoder encoder;
 
+
     public EmployeeService(EmployeeRepository employeeRepository, SecurityValidator secCheck, PersonRepository personRepository, PasswordEncoder encoder){
         this.employeeRepository = employeeRepository;
         this.secCheck = secCheck;
@@ -37,6 +38,8 @@ public class EmployeeService implements IEmployee  {
             Employer employer = secCheck.findUserFromAuthentication(auth, Employer.class);
             try {
                 employee.setEmployer(employer);
+                String password = encoder.encode(employee.getPassword());
+                employee.setPassword(password);
                 Employee e = this.employeeRepository.save(employee);
                 return e;
             }catch (Exception e){

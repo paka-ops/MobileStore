@@ -99,11 +99,12 @@ public class StoreService implements IStore { private final StoreRepository stor
         securityCheck.validateStoreAccess(storeId);
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(()-> new ElementNotFoundException("Employee not found "));
-        Authentication auth = securityCheck.getAuthentication();
+       Authentication auth = securityCheck.getAuthentication();
         Employer employer = securityCheck.findUserFromAuthentication(auth, Employer.class);
         Store store = storeRepository.getReferenceById(storeId);
         if(securityCheck.isEmployeeOfEmployer(employer.getId(),employeeId)){
             List<Employee> employees = store.getEmployees();
+            employee.setStore(store);
             employees.add(employee);
             store.setEmployees(employees);
             return storeRepository.save(store);

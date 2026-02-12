@@ -25,7 +25,7 @@ public class ProductController {
         Map<String,Object> response =  res.responseBody(
                 "OK",
                 "FOUND",
-                productService.getAllByCategory(storeId));
+                productService.getAllByStore(storeId));
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
     }
@@ -49,7 +49,7 @@ public class ProductController {
                 .body(res.responseBody("OK","FOUND",product));
     }
     @PostMapping(params = {"categoryId"})
-    public ResponseEntity add(Product product,UUID categoryId){
+    public ResponseEntity add(@RequestBody Product product,@RequestParam UUID categoryId){
         Product pro =  productService.add(product,categoryId);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(res.responseBody("CREATED","CREATION SUCCESSFULLY",pro));

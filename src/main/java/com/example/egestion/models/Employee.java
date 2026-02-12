@@ -46,7 +46,7 @@ public class Employee extends Person implements UserDetails {
 
     @Override
     public String getUsername() {
-        return "";
+        return super.getUsername();
     }
 
     @Override

@@ -24,9 +24,10 @@ public class Store {
     @OneToMany(mappedBy ="store",orphanRemoval = false)
     @JsonIgnore
     List<Employee> employees = new ArrayList<>();
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Employer employer;
     @OneToMany(mappedBy = "store")
+    @JsonIgnore
     private List<Order> order;
     @OneToMany(mappedBy = "store", orphanRemoval = true)
     @JsonIgnore

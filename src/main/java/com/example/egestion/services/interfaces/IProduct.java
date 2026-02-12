@@ -4,6 +4,7 @@ import com.example.egestion.exceptions.*;
 import com.example.egestion.models.Product;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface IProduct {
@@ -16,4 +17,10 @@ public interface IProduct {
     Product getOneByCategory(UUID productId,UUID categoryId) throws ElementNotFoundException, NotAuthenticatedException, NotAuthorizedException, AccessDeniedException;
     Product getProductByNameAndByStore(String productName, UUID storeId);
     Product getProductByProductNameAndByCategory(String productName,UUID categoryId);
+    Product incrementQty(double qty,Product product);
+    Product decrementQty(double qty,Product product);
+    List<Product> incrementAllQtys(Map<Product,Double> productsQtys);
+    List<Product> decrementAllQtys(Map<Product,Double> productsQtys);
+    List<Product> updateAll(List<Product> products);
+
 }

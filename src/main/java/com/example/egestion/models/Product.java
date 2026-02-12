@@ -17,8 +17,7 @@ public class Product {
     @Id @GeneratedValue @UuidGenerator(style = UuidGenerator.Style.TIME)
     private UUID id;
     private String name;
-    private int quantity;
-
+    private double quantity;
     @ManyToOne
     private Category category;
 }

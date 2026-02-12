@@ -1,0 +1,87 @@
+package com.example.egestion.services.implementations;
+
+import com.example.egestion.dto.OrderContentDto;
+import com.example.egestion.exceptions.AccessDeniedException;
+import com.example.egestion.exceptions.ElementNotFoundException;
+import com.example.egestion.models.*;
+import com.example.egestion.repositories.*;
+import com.example.egestion.security.SecurityValidator;
+import com.example.egestion.services.interfaces.IOrderContent;
+import jakarta.transaction.Transactional;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+public class OrderContentService implements IOrderContent {
+    private final OrderContentRepository ocRepository;
+    private final OrderService orderService;
+    private final SecurityValidator securityValidator;
+    private final OrderRepository orderRepository;
+    private final ProductRepository productRepository;
+    private final OrderContentRepository orderContentRepository;
+    private final ProductService productService;
+    private final StoreRepository storeRepository;
+    private final CategoryRepository categoryRepository;
+
+    public OrderContentService(OrderContentRepository ocRepository, OrderService orderService, SecurityValidator securityValidator, OrderRepository orderRepository, ProductRepository productRepository, OrderContentRepository orderContentRepository, ProductService productService, StoreRepository storeRepository, CategoryRepository categoryRepository) {
+        this.ocRepository = ocRepository;
+        this.orderService = orderService;
+        this.securityValidator = securityValidator;
+        this.orderRepository = orderRepository;
+        this.productRepository = productRepository;
+        this.orderContentRepository = orderContentRepository;
+        this.productService = productService;
+        this.storeRepository = storeRepository;
+        this.categoryRepository = categoryRepository;
+    }
+
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public Order add(List<OrderContentDto> orderContentDtos, UUID orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(()-> new ElementNotFoundException("Order not found"));
+        Store store = order.getStore();
+        securityValidator.validateStoreAccess(store.getId());
+        List<OrderContent> orderContents = new ArrayList<>(orderContentDtos.size());
+        List<UUID> productUUIDs = new ArrayList<>(orderContents.size());
+        orderContentDtos.forEach(orderContentDto -> {
+            productUUIDs.add(orderContentDto.getProductId());
+        });
+        List<Product> products =  productRepository.findAllById(productUUIDs);
+        List<UUID> productsCategoriesIds = new ArrayList<>(orderContents.size());
+        products.forEach(product -> {
+            productsCategoriesIds.add(product.getCategory().getId());
+        });
+
+        boolean isAllProductFromStore = categoryRepository.existsAllByIdInAndStoreId(productsCategoriesIds,store.getId());
+        if(!isAllProductFromStore) throw new AccessDeniedException("There is product wich is not from the store");
+        Map<UUID,Product> productMap = products.stream().collect(Collectors.toMap(Product::getId,p->p));
+        Map<Product,OrderContent> orderProducts = new HashMap<>(orderContentDtos.size());
+        Map<Product,Double> productQtyMap = new HashMap<>();
+        orderContentDtos.forEach(orderContentDto -> {
+            Product product = productMap.get(orderContentDto.getProductId());
+            if(product != null){
+                OrderContent orderContent = new OrderContent();
+                orderContent.setOrder(order);
+                orderContent.setProduct(product);
+                orderContent.setQuantity(orderContentDto.getQuantity());
+                orderContents.add(orderContent);
+                orderProducts.put(product,orderContent);
+                productQtyMap.put(product, orderContent.getQuantity());
+            }
+        });
+        orderContentRepository.saveAll(orderContents);
+        productService.decrementAllQtys(productQtyMap);
+        order.setProducts(orderProducts);
+        return orderService.update(order,orderId);
+    }
+
+    @Override
+    public OrderContent update(OrderContent orderContent, UUID orderId) {
+        return null;
+    }
+}

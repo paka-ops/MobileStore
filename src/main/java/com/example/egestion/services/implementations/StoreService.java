@@ -37,7 +37,7 @@ public class StoreService implements IStore { private final StoreRepository stor
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         Employer employer = (Employer) personRepository.findByUsername(username);
-        return storeRepository.findStoresByEmployer(employer.getId());
+        return storeRepository.findStoresByEmployerId(employer.getId());
     }
 
     @Override
@@ -68,8 +68,8 @@ public class StoreService implements IStore { private final StoreRepository stor
         if (store.getName() != null) {
             existing.setName(store.getName());
         }
-        if (store.getLocalisation() != null) {
-            existing.setLocalisation(store.getLocalisation());
+        if (store.getLocation() != null) {
+            existing.setLocation(store.getLocation());
         }
         if (store.getEmployees() != null) {
             existing.setEmployees(store.getEmployees());

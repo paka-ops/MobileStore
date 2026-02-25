@@ -19,13 +19,14 @@ public class Category {
     @OneToMany(mappedBy = "category",orphanRemoval = true)
     @JsonIgnore
     private List<Product> products = new ArrayList<>();
+    private String description;
     @ManyToOne
     private Store store;
 
-    public Category(List<Product> products, String name,Store store) {
+    public Category(List<Product> products, String name,String description, Store store) {
         this.products = products;
         this.name = name;
         this.store = store;
-
+        this.description = description;
     }
 }

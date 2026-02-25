@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/v1/categories")
 public class CategoryController {
     private final CategoryService categoryService;
@@ -33,14 +34,14 @@ public class CategoryController {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(res.responseBody("OK","FOUND",category));
     }
-    @GetMapping("/store/{storeId}")
-    public ResponseEntity getAllByStore(@PathVariable UUID storeId){
+    @GetMapping(params = "storeId")
+    public ResponseEntity getAllByStore(@RequestParam UUID storeId){
             List<Category> categories = categoryService.getAllByStore(storeId);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(res.responseBody("OK","FOUND",categories));
     }
-    @PostMapping("/{storeId}")
-    public ResponseEntity create(@RequestBody Category category,@PathVariable UUID storeId){
+    @PostMapping(params = "storeId")
+    public ResponseEntity create(@RequestBody Category category,@RequestParam UUID storeId){
             Category category1 = categoryService.add(category,storeId);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(res.responseBody("CREATED","CREATION SUCCESSFULLY",category1));
@@ -54,7 +55,7 @@ public class CategoryController {
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable UUID id){
             categoryService.delete(id);
-            return ResponseEntity.status(HttpStatus.OK)
+            return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body(res.responseBody("OK","DELETION SUCCESSFULLY"));
     }
 }

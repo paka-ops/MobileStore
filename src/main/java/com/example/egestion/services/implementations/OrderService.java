@@ -36,8 +36,7 @@ public class OrderService implements IOrder {
             Person person = secCheck.findUserFromAuthentication(auth,Person.class);
             order.setStore(store);
             order.setMaker(person);
-            Order o = orderRepository.save(order);
-            return o;
+            return orderRepository.save(order);
         }catch (Exception e){
             throw new CreationFailedException(e.getMessage());
         }
@@ -45,11 +44,12 @@ public class OrderService implements IOrder {
     }
 
     @Override
-    @PreAuthorize("hasRole('EMPLOYEE')")
+    @PreAuthorize("hasRole('EMPLOYEE')||hasRole('EMPLOYER')")
     @Transactional
     public Order update(Order order, UUID id) throws UpdateFailedException, ElementNotFoundException, AccessDeniedException, NotAuthenticatedException {
         Authentication auth = secCheck.getAuthentication();
-        Employee employee= secCheck.findUserFromAuthentication(auth,Employee.class);
+        Class<?extends Person> T = (auth.getAuthorities().stream().anyMatch(a-> Objects.requireNonNull(a.getAuthority()).contains("EMPLOYER")))? Employer.class: Employee.class;
+        Person employee= secCheck.  findUserFromAuthentication(auth,T);
         Order existingOrder = orderRepository.findById(id)
                 .orElseThrow(()->new ElementNotFoundException("Order not found"));
         if(!existingOrder.getMaker().equals(employee)) throw new AccessDeniedException("You're not the order maker");

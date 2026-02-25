@@ -34,9 +34,8 @@ public class SecurityValidator {
     public boolean hasRole(String role) throws NotAuthenticatedException, NotAuthorizedException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(auth == null|| !auth.isAuthenticated()) throw new NotAuthenticatedException("user not authenticated");
-        if(!auth.getAuthorities().stream().
-                anyMatch(a->a.getAuthority()
-                        .contains(role)))
+        if(!auth.getAuthorities().stream().anyMatch(a->a.getAuthority()
+                .contains(role)))
            return false;
         return true;
     }

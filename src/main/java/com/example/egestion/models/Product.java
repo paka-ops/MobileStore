@@ -18,6 +18,7 @@ public class Product {
     private UUID id;
     private String name;
     private double quantity;
+    private double price;
     @ManyToOne
     private Category category;
 }

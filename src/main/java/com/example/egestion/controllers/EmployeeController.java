@@ -38,9 +38,9 @@ public class EmployeeController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response.responseBody("OK","FOUND",employee));
     }
-    @PostMapping(consumes = "application/json")
-    public ResponseEntity create(@RequestBody Employee employee){
-        Employee employee1 = emService.create(employee);
+    @PostMapping(consumes = "application/json",params = "storeId")
+    public ResponseEntity create(@RequestBody Employee employee,@RequestParam UUID storeId){
+        Employee employee1 = emService.create(employee,storeId);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(response.responseBody("CREATED","CREATION SUCCESSFULLY",employee1));
     }
@@ -53,8 +53,14 @@ public class EmployeeController {
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable UUID id){
         emService.delete(id);
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .body(response.responseBody("OK","DELETED SUCCESSFULLY"));
+    }
+    @GetMapping(params = "storeId")
+    public ResponseEntity getAllByStore(@RequestParam UUID storeId){
+        List<Employee> employees = emService.getAllByStoreId(storeId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response.responseBody("OK","Found",employees));
     }
 
 }

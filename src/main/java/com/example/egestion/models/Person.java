@@ -22,7 +22,7 @@ public abstract class Person {
 
     private UUID id;
     private String firstname;
-    private String secondeName;
+    private String lastname;
     private String phone;
     private String password;
     @Column(unique = true)
@@ -31,7 +31,7 @@ public abstract class Person {
 
     public Person(String firstname,String secondeName,String username,String password,String phone){
         this.firstname = firstname;
-        this.secondeName = secondeName;
+        this.lastname = secondeName;
         this.username = username;
         this.phone = phone;
         this.password = password;

@@ -42,8 +42,8 @@ public class CategoryService implements ICategory {
     @Override
     public Category update(Category category, UUID id) throws UpdateFailedException, UpdateFailedException, NotAuthenticatedException, AccessDeniedException, NotAuthorizedException, ElementNotFoundException {
         this.secCheck.hasRole("ROLE_EMPLOYER");
-        secCheck.validateCategoryAccess(category.getId());
-        Optional<Category> category1 = categoryRepository.findById(category.getId());
+        secCheck.validateCategoryAccess(id);
+        Optional<Category> category1 = categoryRepository.findById(id);
         if(category1.isEmpty()) throw new ElementNotFoundException("Category not found");
         if(category.getName() != null){
             category1.get().setName(category.getName());

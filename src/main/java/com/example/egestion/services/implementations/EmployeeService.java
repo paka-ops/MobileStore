@@ -3,8 +3,10 @@ package com.example.egestion.services.implementations;
 import com.example.egestion.exceptions.*;
 import com.example.egestion.models.Employee;
 import com.example.egestion.models.Employer;
+import com.example.egestion.models.Store;
 import com.example.egestion.repositories.EmployeeRepository;
 import com.example.egestion.repositories.PersonRepository;
+import com.example.egestion.repositories.StoreRepository;
 import com.example.egestion.security.SecurityValidator;
 import com.example.egestion.services.interfaces.IEmployee;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,23 +23,29 @@ public class EmployeeService implements IEmployee  {
     private  final SecurityValidator secCheck;
     private final PersonRepository personRepository;
     private final PasswordEncoder encoder;
+    private final StoreRepository storeRepository;
 
 
-    public EmployeeService(EmployeeRepository employeeRepository, SecurityValidator secCheck, PersonRepository personRepository, PasswordEncoder encoder){
+    public EmployeeService(EmployeeRepository employeeRepository, SecurityValidator secCheck, PersonRepository personRepository, PasswordEncoder encoder, StoreRepository storeRepository){
         this.employeeRepository = employeeRepository;
         this.secCheck = secCheck;
         this.personRepository = personRepository;
         this.encoder = encoder;
+        this.storeRepository = storeRepository;
     }
 
     @Override
     @PreAuthorize("hasRole('EMPLOYER')")
-    public Employee create(Employee employee) throws CreationFailedException,
+    public Employee create(Employee employee,UUID storeId) throws CreationFailedException,
             NotAuthenticatedException, AccessDeniedException, NotAuthorizedException {
+            secCheck.validateStoreAccess(storeId);
+            Store store = storeRepository.findById(storeId)
+                    .orElseThrow(()->new ElementNotFoundException("Store not found"));
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             Employer employer = secCheck.findUserFromAuthentication(auth, Employer.class);
             try {
                 employee.setEmployer(employer);
+                employee.setStore(store);
                 String password = encoder.encode(employee.getPassword());
                 employee.setPassword(password);
                 Employee e = this.employeeRepository.save(employee);
@@ -63,8 +71,8 @@ public class EmployeeService implements IEmployee  {
             if(employee.getFirstname() != null){
                 employee1.get().setFirstname(employee.getFirstname());
             }
-            if(employee.getSecondeName() != null){
-                employee1.get().setSecondeName(employee.getSecondeName());
+            if(employee.getLastname() != null){
+                employee1.get().setLastname(employee.getLastname());
             }
             if(employee.getPassword() !=  null){
                 employee1.get().setPassword(encoder.encode(employee.getPassword()));
@@ -119,6 +127,12 @@ public class EmployeeService implements IEmployee  {
         return employee.orElseThrow(()->new ElementNotFoundException("user not found"));
     }
 
+    @Override
+    @PreAuthorize("hasRole('EMPLOYER')")
+    public List<Employee> getAllByStoreId(UUID storeId) {
+        secCheck.validateStoreAccess(storeId);
+        return employeeRepository.findAllByStoreId(storeId);
+    }
 
 
 }

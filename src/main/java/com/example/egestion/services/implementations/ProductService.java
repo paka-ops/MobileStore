@@ -5,6 +5,7 @@ import com.example.egestion.models.*;
 import com.example.egestion.repositories.CategoryRepository;
 import com.example.egestion.repositories.ProductRepository;
 
+import com.example.egestion.repositories.StockRepository;
 import com.example.egestion.repositories.StoreRepository;
 import com.example.egestion.security.SecurityValidator;
 import com.example.egestion.services.interfaces.IProduct;
@@ -21,13 +22,17 @@ public class ProductService implements IProduct {
     private final SecurityValidator securityValidator;
     private final CategoryRepository categoryRepository;
     private final StoreRepository storeRepository;
+    private final StockRepository stockRepository;
+    private final StockService stockService;
 
 
-    public ProductService(ProductRepository productRepository, SecurityValidator securityValidator, CategoryRepository categoryRepository, StoreRepository storeRepository) {
+    public ProductService(ProductRepository productRepository, SecurityValidator securityValidator, CategoryRepository categoryRepository, StoreRepository storeRepository, StockRepository stockRepository, StockService stockService) {
         this.productRepository = productRepository;
         this.securityValidator = securityValidator;
         this.categoryRepository = categoryRepository;
         this.storeRepository = storeRepository;
+        this.stockRepository = stockRepository;
+        this.stockService = stockService;
     }
 
 
@@ -41,15 +46,20 @@ public class ProductService implements IProduct {
         securityValidator.validateCategoryAccess(categoryId);
         product.setCategory(category);
         Product savingProduct =  productRepository.save(product);
+        Stock stock = new Stock();
+        stock.setProduct(savingProduct);
+        stock.setBaseStock(savingProduct.getQuantity());
+        stock.setTotalSell(0);
+        stockRepository.save(stock);
          return savingProduct;
     }
 
     @Override
     @PreAuthorize("hasRole('EMPLOYER')")
     public Product update(Product product, UUID id) throws UpdateFailedException, NotAuthenticatedException, AccessDeniedException, NotAuthorizedException,ElementNotFoundException {
-        this.securityValidator.hasRole("EMPLOYER");
+
         securityValidator.validateProductAccess(id);
-        Product pro = productRepository.getReferenceById(product.getId());
+        Product pro = productRepository.getReferenceById(id);
         if(product.getName() != null){
             pro.setName(product.getName());
         }if(product.getCategory() != null){
@@ -57,7 +67,11 @@ public class ProductService implements IProduct {
         }if(product.getQuantity() != pro.getQuantity()){
             pro.setQuantity(product.getQuantity());
         }
-        return productRepository.save(pro);
+        Product saved = productRepository.save(pro);
+        Stock stock = stockRepository.findByProductId(id);
+        stock.setBaseStock(product.getQuantity());
+        stockRepository.save(stock);
+        return saved;
     }
 
     @Override
@@ -140,13 +154,16 @@ public class ProductService implements IProduct {
     @Transactional(rollbackOn = Exception.class)
     public List<Product> decrementAllQtys(Map<Product, Double> productsQtys) {
         List<Product> products = new ArrayList<>(productsQtys.size());
+        Map<Double,UUID> productsMap = new HashMap<>(productsQtys.size());
          productsQtys.forEach((product,qty)-> {
             double newQty = product.getQuantity() - qty;
             if(newQty<0) throw new OperationFailedException("Decremention opertation failed");
             product.setQuantity(newQty);
             products.add(product);
+            productsMap.put(qty,product.getId());
         });
-         return updateAll(products);
+      List<Stock> stocks =    stockService.incrementManySales(productsMap);
+        return  updateAll(products);
     }
 
     @Override
@@ -156,6 +173,15 @@ public class ProductService implements IProduct {
      */
     public List<Product> updateAll(List<Product> products) {
         return productRepository.saveAll(products);
+    }
+
+    @Override
+    @PreAuthorize("hasRole('EMPLOYER')")
+    public Product restockProduct(double qty, UUID productId) throws AccessDeniedException, NotAuthenticatedException, NotAuthorizedException, ElementNotFoundException {
+        securityValidator.validateProductAccess(productId);
+        Product product = productRepository.getReferenceById(productId);
+        product.setQuantity(product.getQuantity() + qty );
+        return productRepository.save(product);
     }
 
 

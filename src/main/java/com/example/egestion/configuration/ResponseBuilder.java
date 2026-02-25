@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,7 @@ public class ResponseBuilder {
         Map<String,Object> response = new HashMap<>();
         response.put("status",status);
         response.put("message",message);
-        if(object != null)response.put(object.getClass().toString() ,object);
+        if(object != null)response.put(Arrays.stream(object.getClass().toString().split("\\.")).toList().getLast() ,object);
         response.put("object",null);
         return response;
     }

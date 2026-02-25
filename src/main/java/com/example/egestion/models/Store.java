@@ -20,7 +20,7 @@ public class Store {
     @Id @GeneratedValue @UuidGenerator(style = UuidGenerator.Style.TIME)
     private UUID id;
     private String name;
-    private String localisation;
+    private String location;
     @OneToMany(mappedBy ="store",orphanRemoval = false)
     @JsonIgnore
     List<Employee> employees = new ArrayList<>();

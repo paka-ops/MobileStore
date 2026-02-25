@@ -47,12 +47,12 @@ public class OrderContentService implements IOrderContent {
         Store store = order.getStore();
         securityValidator.validateStoreAccess(store.getId());
         List<OrderContent> orderContents = new ArrayList<>(orderContentDtos.size());
-        List<UUID> productUUIDs = new ArrayList<>(orderContents.size());
+        List<UUID> productUUIDs = new ArrayList<>(orderContentDtos.size());
         orderContentDtos.forEach(orderContentDto -> {
             productUUIDs.add(orderContentDto.getProductId());
         });
         List<Product> products =  productRepository.findAllById(productUUIDs);
-        List<UUID> productsCategoriesIds = new ArrayList<>(orderContents.size());
+        List<UUID> productsCategoriesIds = new ArrayList<>(orderContentDtos.size());
         products.forEach(product -> {
             productsCategoriesIds.add(product.getCategory().getId());
         });

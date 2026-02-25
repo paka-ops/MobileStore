@@ -16,4 +16,5 @@ public interface IStore {
     Store addEmployee(UUID storeId,UUID employeeId)throws ElementNotFoundException, AccessDeniedException, NotAuthenticatedException, NotAuthorizedException,ElementAddingFailedException;
 
 
+
 }

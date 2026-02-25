@@ -21,6 +21,7 @@ public interface IProduct {
     Product decrementQty(double qty,Product product);
     List<Product> incrementAllQtys(Map<Product,Double> productsQtys);
     List<Product> decrementAllQtys(Map<Product,Double> productsQtys);
-    List<Product> updateAll(List<Product> products);
+    List<Product> updateAll(List<Product> products) ;
+    Product restockProduct(double qty,UUID productId) throws AccessDeniedException, NotAuthenticatedException, NotAuthorizedException, ElementNotFoundException;
 
 }

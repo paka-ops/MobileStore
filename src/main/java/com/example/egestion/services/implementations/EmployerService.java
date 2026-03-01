@@ -21,7 +21,6 @@ public class EmployerService implements IEmployer{
     }
 
     @Override
-    @PreAuthorize("ADMIN")
     public Employer create(Employer employer) throws CreationFailedException {
         try{
             String password = passwordEncoder.encode(employer.getPassword());

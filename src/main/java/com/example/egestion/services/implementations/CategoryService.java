@@ -74,11 +74,9 @@ public class CategoryService implements ICategory {
 
     @Override
     public List<Category> getAllByStore(UUID storeId) throws ElementNotFoundException, AccessDeniedException, NotAuthenticatedException, NotAuthorizedException {
-        secCheck.hasRole("EMPLOYER");
+        if(!(secCheck.hasRole("EMPLOYER") || secCheck.hasRole("EMPLOYEE"))) throw new AccessDeniedException("your not allowed") ;
+        secCheck.validateStoreAccess(storeId);
         Optional<Store> store   =  storeRepository.findById(storeId);
-        if(store.isEmpty()) throw new ElementNotFoundException("Store not found");
-        Authentication auth = secCheck.getAuthentication();
-        Employer employer = secCheck.findUserFromAuthentication(auth,Employer.class);
         List<Category> categories = store.get().getCategories();
         return categories;
     }

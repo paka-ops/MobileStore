@@ -181,7 +181,9 @@ public class ProductService implements IProduct {
         securityValidator.validateProductAccess(productId);
         Product product = productRepository.getReferenceById(productId);
         product.setQuantity(product.getQuantity() + qty );
-        return productRepository.save(product);
+        Product savedProduct = productRepository.save(product);
+        stockService.setBasedStock(qty,productId);
+        return savedProduct;
     }
 
 

@@ -122,8 +122,22 @@ public class SecurityConfig {
         return urlConfig;
 
     }
-
-
+    /*@Bean
+    public CommandLineRunner loadData(EmployerRepository employerRepository,PasswordEncoder encoder){
+        return args ->{
+            employerRepository.save(
+                    new Employer(
+                            "KB",
+                            "Bernard",
+                            "KB",
+                            encoder.encode("1234"),
+                            "78451256",
+                            null,
+                            null
+                    )
+            );
+        };
+    }*/
 
 
 }

@@ -48,8 +48,10 @@ public class OrderController {
     @PostMapping(params = "storeId")
     public ResponseEntity create(@RequestBody Order order, @RequestParam UUID storeId){
         Order o = orderService.create(order,storeId);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(res.responseBody("OK","CREATION SUCCESSFULLY",o));
+        OrderDto orderDto = new OrderDto();
+        orderDto.fromOrder(o);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(res.responseBody("OK","CREATION SUCCESSFULLY",orderDto));
     }
     @DeleteMapping("/{orderId}")
     public ResponseEntity delete(@PathVariable UUID orderId){

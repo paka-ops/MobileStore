@@ -19,7 +19,7 @@ public class OrderContent {
     @GeneratedValue  @UuidGenerator(style= UuidGenerator.Style.TIME)
     private UUID id;
     private Double quantity;
-    @OneToOne
+    @ManyToOne
     @JsonIgnore
     private Product product;
     @ManyToOne

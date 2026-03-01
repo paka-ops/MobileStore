@@ -3,6 +3,7 @@ package com.example.egestion.services.implementations;
 import com.example.egestion.exceptions.*;
 import com.example.egestion.models.Employee;
 import com.example.egestion.models.Employer;
+import com.example.egestion.models.Person;
 import com.example.egestion.models.Store;
 import com.example.egestion.repositories.EmployeeRepository;
 import com.example.egestion.repositories.PersonRepository;
@@ -32,16 +33,16 @@ public class StoreService implements IStore { private final StoreRepository stor
 
 
     @Override
-    @PreAuthorize("hasRole('EMPLOYER')")
+    @PreAuthorize("hasRole('EMPLOYER') || hasRole('EMPLOYEE')")
     public List<Store> getAll() throws AccessDeniedException, NotAuthenticatedException, NotAuthorizedException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        Employer employer = (Employer) personRepository.findByUsername(username);
-        return storeRepository.findStoresByEmployerId(employer.getId());
+        Person person =  personRepository.findByUsername(username);
+        return storeRepository.findStoresByEmployerIdOrEmployeesId(person.getId(),person.getId());
     }
 
     @Override
-    @PreAuthorize("hasRole('EMPLOYER')")
+    @PreAuthorize("hasRole('EMPLOYER') ")
     public Store getOne(UUID id) throws ElementNotFoundException,
             NotAuthorizedException, AccessDeniedException, NotAuthenticatedException {
         securityCheck.validateStoreAccess(id);

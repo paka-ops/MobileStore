@@ -77,6 +77,12 @@ public class ProductController {
         return ResponseEntity.status(200)
                 .body(res.responseBody("OK","FOUND" ,stock));
     }
+    @PatchMapping(value = "/{productId}",params = "quantity")
+    public ResponseEntity restockProduct(@PathVariable UUID productId,@RequestParam double quantity){
+        Product product = productService.restockProduct(quantity,productId);
+        return ResponseEntity.status(200)
+                .body(res.responseBody("OK","FOUND" ,product));
+    }
 
 
 }

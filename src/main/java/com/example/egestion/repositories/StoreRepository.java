@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface StoreRepository extends JpaRepository<Store, UUID> {
-    List<Store> findStoresByEmployerId(UUID employerId);
+    List<Store> findStoresByEmployerIdOrEmployeesId(UUID employerId,UUID employeeId);
 
 
 }

@@ -66,6 +66,10 @@ public class ProductService implements IProduct {
             pro.setCategory(product.getCategory());
         }if(product.getQuantity() != pro.getQuantity()){
             pro.setQuantity(product.getQuantity());
+        }if(product.getBuyingPrice() != pro.getBuyingPrice()){
+            pro.setBuyingPrice(product.getBuyingPrice());
+        }if(product.getSalingPrice() != pro.getSalingPrice()){
+            pro.setSalingPrice(product.getSalingPrice());
         }
         Product saved = productRepository.save(pro);
         Stock stock = stockRepository.findByProductId(id);

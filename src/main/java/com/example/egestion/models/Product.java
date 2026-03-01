@@ -1,10 +1,7 @@
 package com.example.egestion.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ManyToAny;
@@ -18,7 +15,10 @@ public class Product {
     private UUID id;
     private String name;
     private double quantity;
-    private double price;
+    @Column(nullable = true)
+    private double buyingPrice;
+    @Column(nullable = false)
+    private double salingPrice;
     @ManyToOne
     private Category category;
 }

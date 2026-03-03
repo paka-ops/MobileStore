@@ -1,5 +1,6 @@
 package com.example.egestion.models;
 
+import com.example.egestion.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -28,5 +29,6 @@ public class Order {
     private Person maker;
     @ManyToOne
     private Store store;
-
+    @Enumerated(value = EnumType.STRING)
+    private OrderStatus status;
 }

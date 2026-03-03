@@ -1,12 +1,10 @@
 package com.example.egestion.models;
 
+import com.example.egestion.enums.Plan;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,8 +14,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.lang.annotation.Inherited;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @NoArgsConstructor
@@ -29,11 +30,11 @@ public class Employer extends Person implements UserDetails {
     @OneToMany(mappedBy = "employer")
     @JsonIgnore
     private List<Store> stores = new ArrayList<>();
-
     @OneToMany(mappedBy = "employer",orphanRemoval = true)
     @JsonIgnore
     private List<Employee> employees = new ArrayList<>();
-
+    @OneToOne()
+    private Subscription subscription;
     public Employer(String firstname, String secondeName, String username, String password, String phone, List<Store> stores, List<Employee> employees) {
         super(firstname, secondeName, username, password, phone);
         this.stores = stores;
@@ -57,7 +58,8 @@ public class Employer extends Person implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        if(this.subscription == null) return true;
+        return this.subscription.getExpirationDate().isAfter(LocalDate.now());
     }
 
     @Override

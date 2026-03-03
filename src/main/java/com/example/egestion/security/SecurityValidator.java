@@ -46,7 +46,8 @@ public class SecurityValidator {
     }
     public <T extends  Person> T findUserFromAuthentication(Authentication auth, Class<T> clasz){
         String username = auth.getName();
-        return clasz.cast(personRepository.findByUsername(username));
+        return clasz.cast(personRepository.findByUsername(username)
+                .orElseThrow(()->new ElementNotFoundException("User not found ")));
     }
     public Authentication getAuthentication() throws NotAuthenticatedException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

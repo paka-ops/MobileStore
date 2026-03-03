@@ -37,7 +37,8 @@ public class StoreService implements IStore { private final StoreRepository stor
     public List<Store> getAll() throws AccessDeniedException, NotAuthenticatedException, NotAuthorizedException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        Person person =  personRepository.findByUsername(username);
+        Person person =  personRepository.findByUsername(username)
+                .orElseThrow(()->new ElementNotFoundException("Useer not found"));
         return storeRepository.findStoresByEmployerIdOrEmployeesId(person.getId(),person.getId());
     }
 

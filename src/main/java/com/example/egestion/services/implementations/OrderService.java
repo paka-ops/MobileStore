@@ -54,8 +54,7 @@ public class OrderService implements IOrder {
                 .orElseThrow(()->new ElementNotFoundException("Order not found"));
         if(!existingOrder.getMaker().equals(employee)) throw new AccessDeniedException("You're not the order maker");
         order.setId(id);
-        Order o = orderRepository.save(order);
-        return o;
+        return orderRepository.save(order);
     }
 
     @Override
@@ -81,7 +80,7 @@ public class OrderService implements IOrder {
         Authentication auth = secCheck.getAuthentication();
         Employer employer = secCheck.findUserFromAuthentication(auth, Employer.class);
         secCheck.isEmployeeOfEmployer(employer.getId(),employeeId);
-        return orderRepository.findAllByMaker(employeeId);
+        return orderRepository.findAllByMakerId(employeeId);
     }
     @Override
     @PreAuthorize("hasRole('EMPLOYEE')||hasRole('EMPLOYER')")
@@ -91,6 +90,14 @@ public class OrderService implements IOrder {
         if(!isOrderExist) throw new ElementNotFoundException("Order not found ");
         Order order =  orderRepository.findByIdAndStoreId(orderId,storeId);
         return order;
+    }
+
+    @Override
+    @PreAuthorize("hasRole('EMPLOYER') && hasRole('EMPLOYEE')")
+    public List<Order> getAllByStoreBetweenDates(UUID storeId, Date startDate, Date endDate) throws ElementNotFoundException {
+        secCheck.validateStoreAccess(storeId);
+        if(endDate == null) return orderRepository.getAllByStoreIdAndCreationDate(storeId, startDate);
+        return orderRepository.getAllByStoreIdAndCreationDateBetween(storeId,startDate,endDate);
     }
 
 

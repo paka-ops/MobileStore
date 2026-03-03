@@ -5,6 +5,7 @@ import com.example.egestion.models.Stock;
 import com.example.egestion.repositories.StockRepository;
 import com.example.egestion.security.SecurityValidator;
 import com.example.egestion.services.interfaces.IStock;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class StockService implements IStock {
     }
 
     @Override
+    @Transactional
     public Stock setBasedStock(double basedStock, UUID productId) {
         Stock stock = stockRepository.findByProductId(productId);
         stock.setBaseStock(stock.getBaseStock() + basedStock);
@@ -30,6 +32,7 @@ public class StockService implements IStock {
     }
 
     @Override
+    @Transactional
     public Stock incrementSales(double nbrSale,UUID productId) {
         Stock stock = stockRepository.findByProductId(productId);
         stock.setTotalSell(stock.getTotalSell() + nbrSale);
@@ -37,6 +40,7 @@ public class StockService implements IStock {
     }
 
     @Override
+    @Transactional
     public List<Stock> incrementManySales(Map<Double, UUID> selsProduct) {
         List<UUID> productIds = selsProduct.values().stream().toList();
         List<Stock> stocks = stockRepository.findAllByProductIdIn(productIds);
@@ -53,6 +57,7 @@ public class StockService implements IStock {
     }
 
     @Override
+    @Transactional
     public Stock getProductStodck(UUID productId) {
         securityValidator.validateProductAccess(productId);
         return stockRepository.findByProductId(productId);

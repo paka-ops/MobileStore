@@ -1,6 +1,7 @@
 package com.example.egestion.security;
 
 import com.example.egestion.dto.LoginResponse;
+import com.example.egestion.exceptions.ElementNotFoundException;
 import com.example.egestion.models.Admin;
 import com.example.egestion.models.Employee;
 import com.example.egestion.models.Employer;
@@ -92,12 +93,13 @@ public class SecurityConfig {
                                     res.getWriter().write("""
                                             {
                                                 "status": "login failed",
-                                                "messsage": "username or password failed"
+                                                "messsage": "incorrect username or password"
+                                             }
                                             """);
 
                                 }).permitAll()
 
-                ).exceptionHandling(ex ->{
+                )/*.exceptionHandling(ex ->{
                     ex.authenticationEntryPoint(((request, response, authException) -> {
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         response.setContentType("application/json");
@@ -108,12 +110,14 @@ public class SecurityConfig {
                                 }""");
                     }));
                 })
+                */
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
     @Bean
     public UserDetailsService userDetailsService(PersonRepository pRepo){
-        return username ->(UserDetails) pRepo.findByUsername(username);
+        return username ->(UserDetails) pRepo.findByUsername(username)
+                .orElseThrow(()-> new ElementNotFoundException("user not found"));
     }
     private CorsConfigurationSource corsConfigurationSourceource(){
         CorsConfiguration corsConfiguration = new CorsConfiguration();

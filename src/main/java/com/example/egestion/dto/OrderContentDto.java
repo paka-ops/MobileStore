@@ -9,8 +9,14 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderContentDto {
+    private UUID id;
     private UUID productId;
     private UUID orderId;
     private double quantity;
 
+    public OrderContentDto(UUID productId, UUID orderId, double quantity) {
+        this.productId = productId;
+        this.orderId = orderId;
+        this.quantity = quantity;
+    }
 }

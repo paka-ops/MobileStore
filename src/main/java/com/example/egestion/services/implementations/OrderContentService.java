@@ -8,6 +8,7 @@ import com.example.egestion.repositories.*;
 import com.example.egestion.security.SecurityValidator;
 import com.example.egestion.services.interfaces.IOrderContent;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotEmpty;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +26,9 @@ public class OrderContentService implements IOrderContent {
     private final ProductService productService;
     private final StoreRepository storeRepository;
     private final CategoryRepository categoryRepository;
+    private final StockService stockService;
 
-    public OrderContentService(OrderContentRepository ocRepository, OrderService orderService, SecurityValidator securityValidator, OrderRepository orderRepository, ProductRepository productRepository, OrderContentRepository orderContentRepository, ProductService productService, StoreRepository storeRepository, CategoryRepository categoryRepository) {
+    public OrderContentService(OrderContentRepository ocRepository, OrderService orderService, SecurityValidator securityValidator, OrderRepository orderRepository, ProductRepository productRepository, OrderContentRepository orderContentRepository, ProductService productService, StoreRepository storeRepository, CategoryRepository categoryRepository, StockService stockService) {
         this.ocRepository = ocRepository;
         this.orderService = orderService;
         this.securityValidator = securityValidator;
@@ -36,6 +38,7 @@ public class OrderContentService implements IOrderContent {
         this.productService = productService;
         this.storeRepository = storeRepository;
         this.categoryRepository = categoryRepository;
+        this.stockService = stockService;
     }
 
     @Override
@@ -83,5 +86,35 @@ public class OrderContentService implements IOrderContent {
     @Override
     public OrderContent update(OrderContent orderContent, UUID orderId) {
         return null;
+    }
+
+    
+    @PreAuthorize("hasRole('EMPLOYER') || hasRole('EMPLOYEE')")
+    @Transactional
+    @Override
+    public boolean delete(UUID orderContentId) {
+        OrderContent orderContent = orderContentRepository.findById(orderContentId).orElseThrow(()->new ElementNotFoundException("OrderContent not found"));
+        securityValidator.validateProductAccess(orderContent.getProduct().getId());
+        stockService.setBasedStock(orderContent.getQuantity(), orderContent.getProduct().getId());
+        orderContentRepository.deleteById(orderContent.getId());
+        return true;
+
+    }
+
+    @PreAuthorize("hasRole('EMPLOYER') || hasRole('EMPLOYEE')")
+    @Transactional
+    @Override
+    public boolean deleteMany(@NotEmpty List<UUID> orderContentsIds) {
+        List<OrderContent> orderContents = orderContentRepository.findAllById(orderContentsIds);
+        Map<UUID,Double> productQtyMap = new HashMap<>(orderContentsIds.size());
+        orderContents.forEach(element ->{
+            securityValidator.validateProductAccess(element.getProduct().getId());
+            productQtyMap.put(element.getProduct().getId(), element.getQuantity());
+        });
+        productQtyMap.forEach((productId,qty)->{
+            stockService.setBasedStock(qty,productId);
+        });
+        orderContentRepository.deleteAllById(orderContentsIds);
+        return true;
     }
 }

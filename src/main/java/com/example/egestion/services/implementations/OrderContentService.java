@@ -117,4 +117,11 @@ public class OrderContentService implements IOrderContent {
         orderContentRepository.deleteAllById(orderContentsIds);
         return true;
     }
+
+    @Override
+    public List<OrderContent> getAllByOrderId(UUID orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(()->new ElementNotFoundException("order not Found"));
+        securityValidator.validateStoreAccess(order.getStore().getId());
+        return orderContentRepository.findAllByOrderId(orderId);
+    }
 }

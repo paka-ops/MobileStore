@@ -24,7 +24,7 @@ public class Store {
     @OneToMany(mappedBy ="store",orphanRemoval = false)
     @JsonIgnore
     List<Employee> employees = new ArrayList<>();
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     private Employer employer;
     @OneToMany(mappedBy = "store")
     @JsonIgnore
@@ -37,6 +37,12 @@ public class Store {
         if(employees != null){
             for(Employee e : employees){
                 e.setStore(null);
+            }
+            for(Order o : order){
+                o.setStore(null);
+            }
+            for(Category c: categories){
+                c.setStore(null);
             }
 
         }

@@ -1,5 +1,6 @@
 package com.example.egestion.services.implementations;
 
+import com.example.egestion.enums.OrderStatus;
 import com.example.egestion.exceptions.*;
 import com.example.egestion.models.*;
 import com.example.egestion.repositories.*;
@@ -36,6 +37,7 @@ public class OrderService implements IOrder {
             Person person = secCheck.findUserFromAuthentication(auth,Person.class);
             order.setStore(store);
             order.setMaker(person);
+            order.setStatus(OrderStatus.CREATED);
             return orderRepository.save(order);
         }catch (Exception e){
             throw new CreationFailedException(e.getMessage());
@@ -54,6 +56,12 @@ public class OrderService implements IOrder {
                 .orElseThrow(()->new ElementNotFoundException("Order not found"));
         if(!existingOrder.getMaker().equals(employee)) throw new AccessDeniedException("You're not the order maker");
         order.setId(id);
+        switch (order.getStatus()){
+            case CREATED :
+                order.setStatus(OrderStatus.VALIDATED);
+            case VALIDATED:
+                order.setStatus(OrderStatus.UPDATED);
+        }
         return orderRepository.save(order);
     }
 
@@ -88,8 +96,7 @@ public class OrderService implements IOrder {
         secCheck.validateStoreAccess(storeId);
         boolean isOrderExist = orderRepository.existsById(orderId);
         if(!isOrderExist) throw new ElementNotFoundException("Order not found ");
-        Order order =  orderRepository.findByIdAndStoreId(orderId,storeId);
-        return order;
+        return orderRepository.findByIdAndStoreId(orderId,storeId);
     }
 
     @Override

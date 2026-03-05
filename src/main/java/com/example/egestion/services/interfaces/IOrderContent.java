@@ -15,4 +15,5 @@ public interface IOrderContent {
     public OrderContent update(OrderContent orderContent, UUID orderId);
     boolean delete(UUID orderContentId);
     boolean deleteMany(@NotEmpty List<UUID> orderContentsIds);
+    List<OrderContent> getAllByOrderId(UUID orderId);
 }

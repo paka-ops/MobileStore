@@ -20,8 +20,8 @@ public class Order {
     @Id @GeneratedValue @UuidGenerator(style=UuidGenerator.Style.TIME)
     private UUID id;
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
-    @JsonIgnore
     @MapKey(name="product")
+    @JsonIgnore
     private Map<Product,OrderContent> products  = new TreeMap<>();
     @CreationTimestamp
     private Date creationDate;

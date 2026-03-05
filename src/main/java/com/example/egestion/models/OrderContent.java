@@ -20,8 +20,8 @@ public class OrderContent {
     private UUID id;
     private Double quantity;
     @ManyToOne
-    @JsonIgnore
     private Product product;
+    @JsonIgnore
     @ManyToOne
     private Order order;
 

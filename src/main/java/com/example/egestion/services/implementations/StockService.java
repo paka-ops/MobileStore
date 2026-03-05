@@ -8,6 +8,7 @@ import com.example.egestion.services.interfaces.IStock;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,9 +45,7 @@ public class StockService implements IStock {
     public List<Stock> incrementManySales(Map<Double, UUID> selsProduct) {
         List<UUID> productIds = selsProduct.values().stream().toList();
         List<Stock> stocks = stockRepository.findAllByProductIdIn(productIds);
-        Map<UUID,Stock> productsStocks = stocks.stream().collect(Collectors.toMap(stock -> {
-            return stock.getProduct().getId();
-        }, stock ->stock));
+        Map<UUID,Stock> productsStocks = stocks.stream().collect(Collectors.toMap(Stock::getProductId, stock ->stock));
         List<Stock> updatedStocks = new ArrayList<>(productsStocks.size());
         selsProduct.forEach((qt,productId)->{
             Stock stock = productsStocks.get(productId);
@@ -61,6 +60,17 @@ public class StockService implements IStock {
     public Stock getProductStodck(UUID productId) {
         securityValidator.validateProductAccess(productId);
         return stockRepository.findByProductId(productId);
+    }
+
+    public Stock createProductStock(Product product){
+        Stock stock = new Stock();
+        stock.setProductId(product.getId());
+        stock.setBaseStock(product.getQuantity());
+        stock.setBuyingPrice(product.getBuyingPrice());
+        stock.setSellingPrice(product.getSalingPrice());
+        stock.setDate(LocalDate.now());
+        stock.setTotalSell(0);
+        return stockRepository.save(stock);
     }
 
 

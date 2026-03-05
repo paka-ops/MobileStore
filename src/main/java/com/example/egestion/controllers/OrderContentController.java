@@ -4,6 +4,7 @@ import com.example.egestion.configuration.ResponseBuilder;
 import com.example.egestion.dto.OrderContentDto;
 import com.example.egestion.dto.OrderDto;
 import com.example.egestion.models.Order;
+import com.example.egestion.models.OrderContent;
 import com.example.egestion.repositories.OrderContentRepository;
 import com.example.egestion.services.implementations.OrderContentService;
 import org.springframework.http.HttpStatus;
@@ -18,10 +19,12 @@ import java.util.UUID;
 public class OrderContentController {
     private final OrderContentService ocService;
     private final ResponseBuilder responseBuilder;
+    private final OrderContentService orderContentService;
 
-    public OrderContentController(OrderContentService ocService, ResponseBuilder responseBuilder) {
+    public OrderContentController(OrderContentService ocService, ResponseBuilder responseBuilder, OrderContentService orderContentService, OrderContentService orderContentService1) {
         this.ocService = ocService;
         this.responseBuilder = responseBuilder;
+        this.orderContentService = orderContentService1;
     }
     @PostMapping(params = "orderId")
     public ResponseEntity add(@RequestBody List<OrderContentDto> orderContentDtos, @RequestParam UUID orderId){
@@ -29,8 +32,13 @@ public class OrderContentController {
         OrderDto orderDto = new OrderDto();
         orderDto.fromOrder(order);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(responseBuilder.responseBody("CREATED","ORDER MAKING SUCCESSFULLY",orderDto));
+                .body(responseBuilder.responseBody("CREATED","ORDER MAKING SUCCESSFULLY",order));
 
+    }
+    @GetMapping(params = "orderId")
+    public ResponseEntity getContent(@RequestParam UUID orderId){
+        List<OrderContent> contents = orderContentService.getAllByOrderId(orderId);
+        return ResponseEntity.ok().body(responseBuilder.responseBody("FOUND","OrderContentFound",contents));
     }
 
 }

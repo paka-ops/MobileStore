@@ -2,11 +2,8 @@ package com.example.egestion.services.implementations;
 
 import com.example.egestion.exceptions.*;
 import com.example.egestion.models.*;
-import com.example.egestion.repositories.CategoryRepository;
-import com.example.egestion.repositories.ProductRepository;
+import com.example.egestion.repositories.*;
 
-import com.example.egestion.repositories.StockRepository;
-import com.example.egestion.repositories.StoreRepository;
 import com.example.egestion.security.SecurityValidator;
 import com.example.egestion.services.interfaces.IProduct;
 import jakarta.transaction.Transactional;
@@ -14,7 +11,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
+
 @Service
 
 public class ProductService implements IProduct {
@@ -24,15 +24,17 @@ public class ProductService implements IProduct {
     private final StoreRepository storeRepository;
     private final StockRepository stockRepository;
     private final StockService stockService;
+    private final OrderContentRepository orderContentRepository;
 
 
-    public ProductService(ProductRepository productRepository, SecurityValidator securityValidator, CategoryRepository categoryRepository, StoreRepository storeRepository, StockRepository stockRepository, StockService stockService) {
+    public ProductService(ProductRepository productRepository, SecurityValidator securityValidator, CategoryRepository categoryRepository, StoreRepository storeRepository, StockRepository stockRepository, StockService stockService, OrderContentRepository orderContentRepository) {
         this.productRepository = productRepository;
         this.securityValidator = securityValidator;
         this.categoryRepository = categoryRepository;
         this.storeRepository = storeRepository;
         this.stockRepository = stockRepository;
         this.stockService = stockService;
+        this.orderContentRepository = orderContentRepository;
     }
 
 
@@ -45,19 +47,15 @@ public class ProductService implements IProduct {
                 .orElseThrow(()->new ElementNotFoundException("Categorie not found "));
         securityValidator.validateCategoryAccess(categoryId);
         product.setCategory(category);
-        Product savingProduct =  productRepository.save(product);
-        Stock stock = new Stock();
-        stock.setProduct(savingProduct);
-        stock.setBaseStock(savingProduct.getQuantity());
-        stock.setTotalSell(0);
-        stockRepository.save(stock);
-         return savingProduct;
+        Product pro = productRepository.save(product);
+        Stock stock = stockService.createProductStock(pro);
+        pro.setStock(stock);
+        return productRepository.save(pro);
     }
 
     @Override
     @PreAuthorize("hasRole('EMPLOYER')")
     public Product update(Product product, UUID id) throws UpdateFailedException, NotAuthenticatedException, AccessDeniedException, NotAuthorizedException,ElementNotFoundException {
-
         securityValidator.validateProductAccess(id);
         Product pro = productRepository.getReferenceById(id);
         if(product.getName() != null){
@@ -71,18 +69,27 @@ public class ProductService implements IProduct {
         }if(product.getSalingPrice() != pro.getSalingPrice()){
             pro.setSalingPrice(product.getSalingPrice());
         }
-        Product saved = productRepository.save(pro);
-        Stock stock = stockRepository.findByProductId(id);
-        stock.setBaseStock(product.getQuantity());
-        stockRepository.save(stock);
-        return saved;
+        if((product.getQuantity() != pro.getQuantity())
+                ||(product.getBuyingPrice() != pro.getBuyingPrice())
+                ||(product.getSalingPrice() != pro.getSalingPrice())
+        ){
+            Product savePro = productRepository.save(pro);
+            Stock stock = stockService.createProductStock(savePro);
+            savePro.setStock(stock);
+            return productRepository.save(savePro);
+        }
+        return productRepository.save(pro);
+
+
     }
 
     @Override
     @PreAuthorize("hasRole('EMPLOYER')")
     public void delete(UUID productId) throws UpdateFailedException, NotAuthenticatedException, AccessDeniedException, NotAuthorizedException, ElementNotFoundException {
         securityValidator.validateProductAccess(productId);
-        productRepository.deleteById(productId);
+        Product product = productRepository.getReferenceById(productId);
+        product.setDeleted(true);
+        productRepository.save(product);
     }
 
     @Override
@@ -92,7 +99,9 @@ public class ProductService implements IProduct {
         Store store = storeRepository.getReferenceById(storeId);
         List<Product> products = new ArrayList<>();
         for(Category cat : store.getCategories()){
-            products.addAll(cat.getProducts());
+            List<Product> catProds = cat.getProducts().stream()
+                    .filter(p ->!p.isDeleted()).toList();
+            products.addAll(catProds);
         }
         return products;
 
@@ -102,7 +111,7 @@ public class ProductService implements IProduct {
     @PreAuthorize("hasRole('EMPLOYER') || hasRole('EMPLOYER')")
     public Product getOneByStore(UUID productId, UUID storeId) throws ElementNotFoundException, NotAuthenticatedException, NotAuthorizedException, AccessDeniedException {
         securityValidator.validateProductAccess(productId);
-        return productRepository.findById(productId).get();
+        return productRepository.findById(productId).orElseThrow(()->new ElementNotFoundException("Element not found "));
 
     }
 
@@ -110,8 +119,7 @@ public class ProductService implements IProduct {
     @PreAuthorize("hasRole('EMPLOYER') || hasRole('EMPLOYEE')")
     public List<Product> getAllByCategory(UUID categoryId) throws AccessDeniedException, NotAuthenticatedException, NotAuthorizedException, ElementNotFoundException {
         securityValidator.validateCategoryAccess(categoryId);
-        Category category = categoryRepository.getReferenceById(categoryId);
-        return category.getProducts();
+        return productRepository.getAllByDeletedFalseAndCategoryId(categoryId);
     }
 
     @Override

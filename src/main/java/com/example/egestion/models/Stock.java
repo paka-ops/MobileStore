@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -17,7 +19,11 @@ public class Stock {
     private UUID id;
     private double totalSell;
     private double baseStock;
-    @OneToOne
-    private Product product;
+    @Column(nullable = true)
+    private double buyingPrice;
+    @Column(nullable = true)
+    private double SellingPrice;
+    private LocalDate date;
+    private UUID productId;
 
 }

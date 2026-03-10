@@ -2,6 +2,7 @@ package com.example.egestion.controllers;
 
 import com.example.egestion.configuration.ResponseBuilder;
 import com.example.egestion.dto.OrderContentDto;
+import com.example.egestion.dto.OrderContentResponse;
 import com.example.egestion.dto.OrderDto;
 import com.example.egestion.models.Order;
 import com.example.egestion.models.OrderContent;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,7 +40,24 @@ public class OrderContentController {
     @GetMapping(params = "orderId")
     public ResponseEntity getContent(@RequestParam UUID orderId){
         List<OrderContent> contents = orderContentService.getAllByOrderId(orderId);
-        return ResponseEntity.ok().body(responseBuilder.responseBody("FOUND","OrderContentFound",contents));
+        List<OrderContentResponse> responses = new ArrayList<>(contents.size());
+        OrderContentResponse response = new OrderContentResponse();
+        contents.forEach(e->{
+            response.fromOrderContent(e);
+            responses.add(response);
+        });
+        return ResponseEntity.ok().body(responseBuilder.responseBody("FOUND","OrderContentFound",responses));
+    }
+    @PostMapping
+    public ResponseEntity getContentByOrderIds(@RequestBody List<UUID> ordersIds){
+        List<OrderContent> contents  =    orderContentService.getAllByOrderIds(ordersIds);
+        List<OrderContentResponse> responses = new ArrayList<>(contents.size());
+        OrderContentResponse response = new OrderContentResponse();
+        contents.forEach(e->{
+            response.fromOrderContent(e);
+            responses.add(response);
+        });
+        return ResponseEntity.ok().body(responseBuilder.responseBody("FOUND","OrderContentFound",responses));
     }
 
 }

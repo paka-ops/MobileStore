@@ -25,10 +25,10 @@ public class Product {
     private double buyingPrice;
     @Column(nullable = false)
     private double salingPrice;
-    @JsonIgnore
     @ManyToOne
     private Category category;
     @OneToOne()
+
     private Stock stock;
     @DefaultValue("false")
     private boolean deleted;

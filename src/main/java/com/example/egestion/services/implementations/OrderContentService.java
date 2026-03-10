@@ -17,26 +17,22 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrderContentService implements IOrderContent {
-    private final OrderContentRepository ocRepository;
     private final OrderService orderService;
     private final SecurityValidator securityValidator;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final OrderContentRepository orderContentRepository;
     private final ProductService productService;
-    private final StoreRepository storeRepository;
     private final CategoryRepository categoryRepository;
     private final StockService stockService;
 
-    public OrderContentService(OrderContentRepository ocRepository, OrderService orderService, SecurityValidator securityValidator, OrderRepository orderRepository, ProductRepository productRepository, OrderContentRepository orderContentRepository, ProductService productService, StoreRepository storeRepository, CategoryRepository categoryRepository, StockService stockService) {
-        this.ocRepository = ocRepository;
+    public OrderContentService( OrderService orderService, SecurityValidator securityValidator, OrderRepository orderRepository, ProductRepository productRepository, OrderContentRepository orderContentRepository, ProductService productService, CategoryRepository categoryRepository, StockService stockService) {
         this.orderService = orderService;
         this.securityValidator = securityValidator;
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.orderContentRepository = orderContentRepository;
         this.productService = productService;
-        this.storeRepository = storeRepository;
         this.categoryRepository = categoryRepository;
         this.stockService = stockService;
     }
@@ -123,5 +119,15 @@ public class OrderContentService implements IOrderContent {
         Order order = orderRepository.findById(orderId).orElseThrow(()->new ElementNotFoundException("order not Found"));
         securityValidator.validateStoreAccess(order.getStore().getId());
         return orderContentRepository.findAllByOrderId(orderId);
+    }
+
+    @Override
+    public List<OrderContent> getAllByOrderIds(List<UUID> ordersIds) {
+        List<OrderContent> orderContents = new ArrayList<>(ordersIds.size());
+        ordersIds.forEach(id->{
+            List<OrderContent> orderContent = orderContentRepository.findAllByOrderId(id);
+            if(!orderContent.isEmpty()) orderContents.addAll(orderContent);
+        });
+        return orderContents;
     }
 }

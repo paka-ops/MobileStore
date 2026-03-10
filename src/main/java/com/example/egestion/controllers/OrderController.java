@@ -6,6 +6,7 @@ import com.example.egestion.models.Order;
 import com.example.egestion.repositories.OrderRepository;
 import com.example.egestion.services.implementations.OrderService;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,11 +26,23 @@ public class OrderController {
         this.orderService = orderService;
         this.res = responseBuilder;
     }
-    @GetMapping(params = {"storeId"})
-    public ResponseEntity getAllByStore(@RequestParam UUID storeId){
-        List<Order> orders = orderService.getAllByStore(storeId);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(res.responseBody("OK","FOUND",orders));
+    @GetMapping(params = {"storeId","startDate","endDate"})
+    public ResponseEntity getOrders(
+            @RequestParam UUID storeId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate
+    ) {
+        List<Order> orders;
+
+        // Logique de décision : si les deux dates sont présentes, on filtre par date
+        if (startDate != null) {
+            orders = orderService.getAllByStoreBetweenDates(storeId, startDate, endDate);
+        } else {
+            // Sinon, on récupère tout pour le store
+            orders = orderService.getAllByStore(storeId);
+        }
+
+        return ResponseEntity.ok().body(res.responseBody("200", "FOUND", orders));
     }
     @GetMapping(params = "employeeId")
     public ResponseEntity getAllByEmployee(@RequestParam UUID employeeId){
@@ -64,10 +77,5 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(res.responseBody("OK", "DELETION SUCCESSFULLY"));
     }
-    @GetMapping(params = {"startDate","endDate","stordeId"})
-    public ResponseEntity getOrderByDates(@RequestParam UUID storeId, @NotNull @RequestParam Date startDate, @PathVariable Date endDate ){
-            List<Order> orders =  orderService.getAllByStoreBetweenDates(storeId,startDate,endDate);
-            return ResponseEntity.ok().body(res.responseBody("200","FOUND",orders));
 
-    }
 }

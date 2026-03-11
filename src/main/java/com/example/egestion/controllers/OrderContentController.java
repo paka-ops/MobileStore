@@ -52,11 +52,11 @@ public class OrderContentController {
     public ResponseEntity getContentByOrderIds(@RequestBody List<UUID> ordersIds){
         List<OrderContent> contents  =    orderContentService.getAllByOrderIds(ordersIds);
         List<OrderContentResponse> responses = new ArrayList<>(contents.size());
-        OrderContentResponse response = new OrderContentResponse();
-        contents.forEach(e->{
-            response.fromOrderContent(e);
+        for(OrderContent content: contents){
+            OrderContentResponse response = new OrderContentResponse();
+            response.fromOrderContent(content);
             responses.add(response);
-        });
+        };
         return ResponseEntity.ok().body(responseBuilder.responseBody("FOUND","OrderContentFound",responses));
     }
 

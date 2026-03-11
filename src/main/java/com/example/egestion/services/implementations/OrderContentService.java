@@ -123,11 +123,6 @@ public class OrderContentService implements IOrderContent {
 
     @Override
     public List<OrderContent> getAllByOrderIds(List<UUID> ordersIds) {
-        List<OrderContent> orderContents = new ArrayList<>(ordersIds.size());
-        ordersIds.forEach(id->{
-            List<OrderContent> orderContent = orderContentRepository.findAllByOrderId(id);
-            if(!orderContent.isEmpty()) orderContents.addAll(orderContent);
-        });
-        return orderContents;
+        return orderContentRepository.findAllByOrder_IdIn(ordersIds);
     }
 }

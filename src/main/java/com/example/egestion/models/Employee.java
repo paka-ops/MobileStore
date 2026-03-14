@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.UuidGenerator;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,6 +34,8 @@ public class Employee extends Person implements UserDetails {
     private Employer employer;
     @Enumerated(value = EnumType.STRING)
     private Status status;
+    @ColumnDefault("false")
+    private boolean isDeleted;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -106,6 +106,16 @@ public class OrderService implements IOrder {
         if(endDate == null) return orderRepository.getAllByStoreIdAndCreationDate(storeId, startDate);
         return orderRepository.getAllByStoreIdAndCreationDateBetween(storeId,startDate,endDate);
     }
+    //Employee cant delete an order so it can only to make it status to DELETION_PENDING
+    @Override
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public Order deleteOrderByEmployee(UUID orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(()-> new ElementNotFoundException("Order not found"));
+        secCheck.validateStoreAccess(order.getStore().getId());
+        order.setStatus(OrderStatus.DELETION_PENDING);
+        return orderRepository.save(order);
+    }
 
 
 }

@@ -1,10 +1,8 @@
 package com.example.egestion.services.interfaces;
 
-import com.example.egestion.dto.OrderDto;
 import com.example.egestion.exceptions.*;
 import com.example.egestion.models.Order;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +15,7 @@ public interface IOrder {
     List<Order> getAllByEmployee(UUID employeeId) throws ElementNotFoundException;
     Order getByStore(UUID orderId,UUID storeId);
     List<Order> getAllByStoreBetweenDates(UUID storeId, Date startDate, Date endDate)throws ElementNotFoundException;
+    Order deleteOrderByEmployee(UUID orderId);
 
 
 }
